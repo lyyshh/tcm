@@ -33,7 +33,7 @@
         .header h1 { margin: 0; font-size: 24px; font-weight: 600; letter-spacing: 1px; }
         .header p { margin: 8px 0 0 0; opacity: 0.8; font-size: 13px; }
 
-        .container { max-width: 900px; margin: 20px auto; padding: 0 15px; padding-bottom: 80px; }
+        .container { max-width: 1100px; margin: 20px auto; padding: 0 15px; padding-bottom: 80px; }
 
         /* 实时数据看板样式 */
         .dashboard { 
@@ -97,6 +97,96 @@
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 布局分栏：左侧菜单，右侧药方 */
+        .herb-layout {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        @media (max-width: 768px) {
+            .herb-layout { flex-direction: column; }
+        }
+
+        /* ================= 新增：多级树状菜单样式 ================= */
+        .herb-menu-sidebar {
+            flex: 0 0 280px;
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            max-height: 800px;
+            overflow-y: auto;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+        .menu-tree-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #27ae60;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .tree-menu, .tree-menu ul {
+            list-style: none;
+            padding-left: 14px;
+            margin: 0;
+        }
+        .tree-menu { padding-left: 0; }
+        .tree-node { margin: 4px 0; }
+        .tree-label {
+            display: flex;
+            align-items: center;
+            padding: 6px 8px;
+            font-size: 12.5px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+            color: #444;
+        }
+        .tree-label:hover {
+            background-color: #f5f6fa;
+            color: #000;
+        }
+        .tree-label::before {
+            content: "▸";
+            display: inline-block;
+            width: 14px;
+            color: #95a5a6;
+            transition: transform 0.2s;
+            font-size: 10px;
+        }
+        .tree-node.open > .tree-label::before {
+            transform: rotate(90deg);
+        }
+        .tree-node.leaf > .tree-label::before {
+            content: "•";
+            color: #27ae60;
+            font-size: 14px;
+            padding-left: 2px;
+        }
+        .tree-child-wrapper {
+            display: none;
+        }
+        .tree-node.open > .tree-child-wrapper {
+            display: block;
+        }
+        /* 四级药品高亮特殊处理 */
+        .tree-node.leaf .tree-label {
+            font-size: 11.5px;
+            color: #666;
+        }
+        .tree-node.leaf .tree-label:hover {
+            background-color: #e8f8f5;
+            color: #27ae60;
+        }
+
+        .herb-main-content {
+            flex: 1;
         }
 
         /* 标签超链接样式 */
@@ -299,821 +389,491 @@
                 <button class="clear-btn" onclick="clearFilter()">清除筛选</button>
             </div>
 
-            <div class="section-title">第一章 解表药</div>
-            <div style="font-size: 12px; color: #7f8c8d; margin-bottom: 15px;">凡以发散表邪、治疗表证为主的药物，称为解表药。多具辛味，主入肺、膀胱经。</div>
+            <!-- 新增：左右结构分栏布局 -->
+            <div class="herb-layout">
+                
+                <!-- 左侧四级树状菜单 -->
+                <div class="herb-menu-sidebar">
+                    <div class="menu-tree-title">📂 中药学类目导航</div>
+                    <ul class="tree-menu">
+                        <!-- 一级菜单 -->
+                        <li class="tree-node open">
+                            <div class="tree-label" onclick="toggleNode(this)">中药学</div>
+                            <div class="tree-child-wrapper">
+                                
+                                <!-- 二级菜单：解表药 -->
+                                <div class="tree-node">
+                                    <div class="tree-label" onclick="toggleNode(this)">解表药</div>
+                                    <div class="tree-child-wrapper">
+                                        <!-- 三级菜单 -->
+                                        <div class="tree-node">
+                                            <div class="tree-label" onclick="toggleNode(this)">辛温解表</div>
+                                            <div class="tree-child-wrapper">
+                                                <!-- 四级菜单 -->
+                                                <div class="tree-node leaf"><div class="tree-label" onclick="scrollToHerb('麻黄')">麻黄</div></div>
+                                                <div class="tree-node leaf"><div class="tree-label" onclick="scrollToHerb('桂枝')">桂枝</div></div>
+                                                <div class="tree-node leaf"><div class="tree-label" onclick="scrollToHerb('紫苏')">紫苏</div></div>
+                                                <div class="tree-node leaf"><div class="tree-label" onclick="scrollToHerb('生姜')">生姜</div></div>
+                                                <div class="tree-node leaf"><div class="tree-label" onclick="scrollToHerb('香薷')">香薷</div></div>
+                                                <div class="tree-node leaf"><div class="tree-label" onclick="scrollToHerb('荆芥')">荆芥</div></div>
+                                                <div class="tree-node leaf"><div class="tree-label" onclick="scrollToHerb('防风')">防风</div></div>
+                                                <div class="tree-node leaf"><div class="tree-label" onclick="scrollToHerb('羌活')">羌活</div></div>
+                                                <div class="tree-node leaf"><div class="tree-label" onclick="scrollToHerb('白芷')">白芷</div></div>
+                                            </div>
+                                        </div>
+                                        <div class="tree-node">
+                                            <div class="tree-label" onclick="toggleNode(this)">辛凉解表</div>
+                                            <div class="tree-child-wrapper"><div class="tree-node leaf"><div class="tree-label">薄荷/柴胡等..</div></div></div>
+                                        </div>
+                                    </div>
+                                </div>
 
-            <!-- ================= 辛温解表药 ================= -->
-            <div class="subsection-title">一、辛温解表药（发散风寒药）</div>
-
-            <!-- 麻黄 -->
-            <div class="herb-card" data-properties="温" data-flavors="辛 苦" data-channels="肺经 膀胱经">
-                <details>
-                    <summary><span>🌿 麻黄</span><span class="herb-name-latin">(Mahuang)</span></summary>
-                    <div class="herb-content">
-                        <div class="info-row">
-                            <div class="info-label">药性与归经</div>
-                            <div class="info-value">
-                                <span class="tag-property warm" onclick="filterProperty('温', '麻黄-温')">温</span>
-                                <span class="tag-flavor" onclick="filterFlavor('辛', '麻黄-辛')">辛</span>
-                                <span class="tag-flavor" onclick="filterFlavor('苦', '麻黄-苦')">微苦</span> ➔ 
-                                <span class="tag-channel" onclick="filterChannel('肺经', '麻黄-肺经')">肺经</span>
-                                <span class="tag-channel" onclick="filterChannel('膀胱经', '麻黄-膀胱经')">膀胱经</span>
+                                <!-- 其余各级二级菜单导入 -->
+                                <div class="tree-node"><div class="tree-label" onclick="toggleNode(this)">清热药</div></div>
+                                <div class="tree-node"><div class="tree-label" onclick="toggleNode(this)">泻下药</div></div>
+                                <div class="tree-node"><div class="tree-label" onclick="toggleNode(this)">祛风湿药</div></div>
+                                <div class="tree-node"><div class="tree-label" onclick="toggleNode(this)">化湿药</div></div>
+                                <div class="tree-node"><div class="tree-label" onclick="toggleNode(this)">利水渗湿药</div></div>
+                                <div class="tree-node"><div class="tree-label" onclick="toggleNode(this)">温里药</div></div>
+                                <div class="tree-node"><div class="tree-label" onclick="toggleNode(this)">理气药</div></div>
+                                <div class="tree-node"><div class="tree-label" onclick="toggleNode(this)">消食药</div></div>
+                                <div class="tree-node"><div class="tree-label" onclick="toggleNode(this)">驱虫药</div></div>
+                                <div class="tree-node"><div class="tree-label" onclick="toggleNode(this)">止血药</div></div>
+                                <div class="tree-node"><div class="tree-label" onclick="toggleNode(this)">活血化瘀药</div></div>
+                                <div class="tree-node"><div class="tree-label" onclick="toggleNode(this)">化痰止咳平喘药</div></div>
+                                <div class="tree-node"><div class="tree-label" onclick="toggleNode(this)">安神药</div></div>
+                                <div class="tree-node"><div class="tree-label" onclick="toggleNode(this)">平肝熄风药</div></div>
+                                <div class="tree-node"><div class="tree-label" onclick="toggleNode(this)">开窍药</div></div>
+                                <div class="tree-node"><div class="tree-label" onclick="toggleNode(this)">补虚药</div></div>
+                                <div class="tree-node"><div class="tree-label" onclick="toggleNode(this)">收涩药</div></div>
+                                <div class="tree-node"><div class="tree-label" onclick="toggleNode(this)">涌吐药</div></div>
+                                <div class="tree-node"><div class="tree-label" onclick="toggleNode(this)">攻毒杀虫止痒药</div></div>
+                                <div class="tree-node"><div class="tree-label" onclick="toggleNode(this)">拔毒化腐生肌药</div></div>
                             </div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">主要功效</div>
-                            <div class="info-value" style="font-weight: bold; color: #c0392b;">发汗解表，宣肺平喘，利水消肿。</div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">核心方剂串联</div>
-                            <div class="info-value">外感风寒表实证要药（配桂枝，如 <a href="#" class="formula-link">麻黄汤</a>）；肺气壅遏喘咳要药（如 <a href="#" class="formula-link">麻杏石甘汤</a>）。</div>
-                        </div>
-                    </div>
-                </details>
-            </div>
+                        </li>
+                    </ul>
+                </div>
 
-            <!-- 桂枝 -->
-            <div class="herb-card" data-properties="温" data-flavors="辛 甘" data-channels="心经 肺经 膀胱经">
-                <details>
-                    <summary><span>🌿 桂枝</span><span class="herb-name-latin">(Guizhi)</span></summary>
-                    <div class="herb-content">
-                        <div class="info-row">
-                            <div class="info-label">药性与归经</div>
-                            <div class="info-value">
-                                <span class="tag-property warm" onclick="filterProperty('温', '桂枝-温')">温</span>
-                                <span class="tag-flavor" onclick="filterFlavor('辛', '桂枝-辛')">辛</span>
-                                <span class="tag-flavor" onclick="filterFlavor('甘', '桂枝-甘')">甘</span> ➔ 
-                                <span class="tag-channel" onclick="filterChannel('心经', '桂枝-心经')">心经</span>
-                                <span class="tag-channel" onclick="filterChannel('肺经', '桂枝-肺经')">肺经</span>
-                                <span class="tag-channel" onclick="filterChannel('膀胱经', '桂枝-膀胱经')">膀胱经</span>
+                <!-- 右侧药物展示区 -->
+                <div class="herb-main-content">
+                    <div class="section-title">第八章 解表药</div>
+                    <div style="font-size: 12px; color: #7f8c8d; margin-bottom: 15px;">凡以发散表邪、治疗表证为主的药物，称为解表药。多具辛味，主入肺、膀胱经。</div>
+
+                    <div class="subsection-title" id="cate-xwjb">一、辛温解表药（发散风寒药）</div>
+
+                    <!-- 麻黄 -->
+                    <div class="herb-card" id="herb-麻黄" data-properties="温" data-flavors="辛 苦" data-channels="肺经 膀胱经">
+                        <details>
+                            <summary><span>🌿 麻黄</span><span class="herb-name-latin">(Mahuang)</span></summary>
+                            <div class="herb-content">
+                                <div class="info-row">
+                                    <div class="info-label">药性与归经</div>
+                                    <div class="info-value">
+                                        <span class="tag-property warm" onclick="filterProperty('温', '麻黄-温')">温</span>
+                                        <span class="tag-flavor" onclick="filterFlavor('辛', '麻黄-辛')">辛</span>
+                                        <span class="tag-flavor" onclick="filterFlavor('苦', '麻黄-苦')">微苦</span> ➔ 
+                                        <span class="tag-channel" onclick="filterChannel('肺经', '麻黄-肺经')">肺经</span>
+                                        <span class="tag-channel" onclick="filterChannel('膀胱经', '麻黄-膀胱经')">膀胱经</span>
+                                    </div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-label">主要功效</div>
+                                    <div class="info-value" style="font-weight: bold; color: #c0392b;">发汗解表，宣肺平喘，利水消肿。</div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-label">核心方剂串联</div>
+                                    <div class="info-value">外感风寒表实证要药（配桂枝，如 <a href="#" class="formula-link">麻黄汤</a>）；肺气壅遏喘咳要药（如 <a href="#" class="formula-link">麻杏石甘汤</a>）。</div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">主要功效</div>
-                            <div class="info-value" style="font-weight: bold; color: #c0392b;">发汗解肌，温通经脉，助阳化气。</div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">核心方剂串联</div>
-                            <div class="info-value">治外感风寒表虚证（有汗）之主药（如 <a href="#" class="formula-link">桂枝汤</a>）；温通心阳（如 <a href="#" class="formula-link">桂枝甘草汤</a>）。<span style="color:var(--danger-color); font-weight:bold;">⚠️十九畏：官桂善能倒石脂。</span></div>
-                        </div>
+                        </details>
                     </div>
-                </details>
-            </div>
 
-            <!-- 紫苏 -->
-            <div class="herb-card" data-properties="温" data-flavors="辛" data-channels="肺经 脾经">
-                <details>
-                    <summary><span>🌿 紫苏</span><span class="herb-name-latin">(Zisu)</span></summary>
-                    <div class="herb-content">
-                        <div class="info-row">
-                            <div class="info-label">药性与归经</div>
-                            <div class="info-value">
-                                <span class="tag-property warm" onclick="filterProperty('温', '紫苏-温')">温</span>
-                                <span class="tag-flavor" onclick="filterFlavor('辛', '紫苏-辛')">辛</span> ➔ 
-                                <span class="tag-channel" onclick="filterChannel('肺经', '紫苏-肺经')">肺经</span>
-                                <span class="tag-channel" onclick="filterChannel('脾经', '紫苏-脾经')">脾经</span>
+                    <!-- 桂枝 -->
+                    <div class="herb-card" id="herb-桂枝" data-properties="温" data-flavors="辛 甘" data-channels="心经 肺经 膀胱经">
+                        <details>
+                            <summary><span>🌿 桂枝</span><span class="herb-name-latin">(Guizhi)</span></summary>
+                            <div class="herb-content">
+                                <div class="info-row">
+                                    <div class="info-label">药性与归经</div>
+                                    <div class="info-value">
+                                        <span class="tag-property warm" onclick="filterProperty('温', '桂枝-温')">温</span>
+                                        <span class="tag-flavor" onclick="filterFlavor('辛', '桂枝-辛')">辛</span>
+                                        <span class="tag-flavor" onclick="filterFlavor('甘', '桂枝-甘')">甘</span> ➔ 
+                                        <span class="tag-channel" onclick="filterChannel('心经', '桂枝-心经')">心经</span>
+                                        <span class="tag-channel" onclick="filterChannel('肺经', '桂枝-肺经')">肺经</span>
+                                        <span class="tag-channel" onclick="filterChannel('膀胱经', '桂枝-膀胱经')">膀胱经</span>
+                                    </div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-label">主要功效</div>
+                                    <div class="info-value" style="font-weight: bold; color: #c0392b;">发汗解肌，温通经脉，助阳化气。</div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-label">核心方剂串联</div>
+                                    <div class="info-value">治外感风寒表虚证（有汗）之主药（如 <a href="#" class="formula-link">桂枝汤</a>）；温通心阳（如 <a href="#" class="formula-link">桂枝甘草汤</a>）。<span style="color:var(--danger-color); font-weight:bold;">⚠️十九畏：官桂善能倒石脂。</span></div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">主要功效</div>
-                            <div class="info-value" style="font-weight: bold; color: #c0392b;">解表散寒，行气和胃，安胎，解鱼蟹毒。</div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">临床区分</div>
-                            <div class="info-value">苏叶偏发汗散寒解表；苏梗偏理气宽中安胎（如 <a href="#" class="formula-link">苏梗</a> 治妊娠恶阻）。方剂串联如 <a href="#" class="formula-link">杏苏散</a>。</div>
-                        </div>
+                        </details>
                     </div>
-                </details>
-            </div>
 
-            <!-- 生姜 -->
-            <div class="herb-card" data-properties="温" data-flavors="辛" data-channels="肺经 脾经 胃经">
-                <details>
-                    <summary><span>🌿 生姜</span><span class="herb-name-latin">(Shengjiang)</span></summary>
-                    <div class="herb-content">
-                        <div class="info-row">
-                            <div class="info-label">药性与归经</div>
-                            <div class="info-value">
-                                <span class="tag-property warm" onclick="filterProperty('温', '生姜-温')">温</span>
-                                <span class="tag-flavor" onclick="filterFlavor('辛', '生姜-辛')">辛</span> ➔ 
-                                <span class="tag-channel" onclick="filterChannel('肺经', '生姜-肺经')">肺经</span>
-                                <span class="tag-channel" onclick="filterChannel('脾经', '生姜-脾经')">脾经</span>
-                                <span class="tag-channel" onclick="filterChannel('胃经', '生姜-胃经')">胃经</span>
+                    <!-- 紫苏 -->
+                    <div class="herb-card" id="herb-紫苏" data-properties="温" data-flavors="辛" data-channels="肺经 脾经">
+                        <details>
+                            <summary><span>🌿 紫苏</span><span class="herb-name-latin">(Zisu)</span></summary>
+                            <div class="herb-content">
+                                <div class="info-row">
+                                    <div class="info-label">药性与归经</div>
+                                    <div class="info-value">
+                                        <span class="tag-property warm" onclick="filterProperty('温', '紫苏-温')">温</span>
+                                        <span class="tag-flavor" onclick="filterFlavor('辛', '紫苏-辛')">辛</span> ➔ 
+                                        <span class="tag-channel" onclick="filterChannel('肺经', '紫苏-肺经')">肺经</span>
+                                        <span class="tag-channel" onclick="filterChannel('脾经', '紫苏-脾经')">脾经</span>
+                                    </div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-label">主要功效</div>
+                                    <div class="info-value" style="font-weight: bold; color: #c0392b;">解表散寒，行气和胃，安胎，解鱼蟹毒。</div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-label">临床区分</div>
+                                    <div class="info-value">苏叶偏发汗散寒解表；苏梗偏理气宽中安胎（如 <a href="#" class="formula-link">苏梗</a> 治妊娠恶阻）。方剂串联如 <a href="#" class="formula-link">杏苏散</a>。</div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">主要功效</div>
-                            <div class="info-value" style="font-weight: bold; color: #c0392b;">解表散寒，温中止呕，温肺止咳，解毒。</div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">核心串联</div>
-                            <div class="info-value">被称为“呕家圣药”。常作方剂引药（如生姜大枣配伍）；解鱼蟹及半夏、天南星毒。</div>
-                        </div>
+                        </details>
                     </div>
-                </details>
-            </div>
 
-            <!-- 香薷 -->
-            <div class="herb-card" data-properties="温" data-flavors="辛" data-channels="肺经 胃经">
-                <details>
-                    <summary><span>🌿 香薷</span><span class="herb-name-latin">(Xiangru)</span></summary>
-                    <div class="herb-content">
-                        <div class="info-row">
-                            <div class="info-label">药性与归经</div>
-                            <div class="info-value">
-                                <span class="tag-property warm" onclick="filterProperty('温', '香薷-温')">微温</span>
-                                <span class="tag-flavor" onclick="filterFlavor('辛', '香薷-辛')">辛</span> ➔ 
-                                <span class="tag-channel" onclick="filterChannel('肺经', '香薷-肺经')">肺经</span>
-                                <span class="tag-channel" onclick="filterChannel('胃经', '香薷-胃经')">胃经</span>
+                    <!-- 生姜 -->
+                    <div class="herb-card" id="herb-生姜" data-properties="温" data-flavors="辛" data-channels="肺经 脾经 胃经">
+                        <details>
+                            <summary><span>🌿 生姜</span><span class="herb-name-latin">(Shengjiang)</span></summary>
+                            <div class="herb-content">
+                                <div class="info-row">
+                                    <div class="info-label">药性与归经</div>
+                                    <div class="info-value">
+                                        <span class="tag-property warm" onclick="filterProperty('温', '生姜-温')">温</span>
+                                        <span class="tag-flavor" onclick="filterFlavor('辛', '生姜-辛')">辛</span> ➔ 
+                                        <span class="tag-channel" onclick="filterChannel('肺经', '生姜-肺经')">肺经</span>
+                                        <span class="tag-channel" onclick="filterChannel('脾经', '生姜-脾经')">脾经</span>
+                                        <span class="tag-channel" onclick="filterChannel('胃经', '生姜-胃经')">胃经</span>
+                                    </div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-label">主要功效</div>
+                                    <div class="info-value" style="font-weight: bold; color: #c0392b;">解表散寒，温中止呕，温肺止咳，解毒。</div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-label">核心串联</div>
+                                    <div class="info-value">被称为“呕家圣药”。常作方剂引药（如生姜大枣配伍）；解鱼蟹及半夏、天南星毒。</div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">主要功效</div>
-                            <div class="info-value" style="font-weight: bold; color: #c0392b;">发汗解表，化湿和中，利水消肿。</div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">核心串联</div>
-                            <div class="info-value">被称为“夏月麻黄”。主治暑伏表寒、恶寒发热、头痛无汗、吐泻腹痛者（如 <a href="#" class="formula-link">新加香薷饮</a>）。</div>
-                        </div>
+                        </details>
                     </div>
-                </details>
-            </div>
 
-            <!-- 荆芥 -->
-            <div class="herb-card" data-properties="温" data-flavors="辛" data-channels="肺经 肝经">
-                <details>
-                    <summary><span>🌿 荆芥</span><span class="herb-name-latin">(Jingjie)</span></summary>
-                    <div class="herb-content">
-                        <div class="info-row">
-                            <div class="info-label">药性与归经</div>
-                            <div class="info-value">
-                                <span class="tag-property warm" onclick="filterProperty('温', '荆芥-温')">微温</span>
-                                <span class="tag-flavor" onclick="filterFlavor('辛', '荆芥-辛')">辛</span> ➔ 
-                                <span class="tag-channel" onclick="filterChannel('肺经', '荆芥-肺经')">肺经</span>
-                                <span class="tag-channel" onclick="filterChannel('肝经', '荆芥-肝经')">肝经</span>
+                    <!-- 香薷 -->
+                    <div class="herb-card" id="herb-香薷" data-properties="温" data-flavors="辛" data-channels="肺经 胃经">
+                        <details>
+                            <summary><span>🌿 香薷</span><span class="herb-name-latin">(Xiangru)</span></summary>
+                            <div class="herb-content">
+                                <div class="info-row">
+                                    <div class="info-label">药性与归经</div>
+                                    <div class="info-value">
+                                        <span class="tag-property warm" onclick="filterProperty('温', '香薷-温')">微温</span>
+                                        <span class="tag-flavor" onclick="filterFlavor('辛', '香薷-辛')">辛</span> ➔ 
+                                        <span class="tag-channel" onclick="filterChannel('肺经', '香薷-肺经')">肺经</span>
+                                        <span class="tag-channel" onclick="filterChannel('胃经', '香薷-胃经')">胃经</span>
+                                    </div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-label">主要功效</div>
+                                    <div class="info-value" style="font-weight: bold; color: #c0392b;">发汗解表，化湿和中，利水消肿。</div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-label">核心串联</div>
+                                    <div class="info-value">被称为“夏月麻黄”。主治暑伏表寒、恶寒发热、头痛无汗、吐泻腹痛者（如 <a href="#" class="formula-link">新加香薷饮</a>）。</div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">主要功效</div>
-                            <div class="info-value" style="font-weight: bold; color: #c0392b;">发表散风，透疹消疮，炒炭止血。</div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">核心串联</div>
-                            <div class="info-value">药性微温不燥，为“风药中之气药”，风寒风热表证皆可配伍（如 <a href="#" class="formula-link">银翘散</a>、<a href="#" class="formula-link">荆防败毒散</a>）。荆芥穗发表力强；炒炭可收敛止血。</div>
-                        </div>
+                        </details>
                     </div>
-                </details>
-            </div>
 
-            <!-- 防风 -->
-            <div class="herb-card" data-properties="温" data-flavors="辛 甘" data-channels="膀胱经 肝经 脾经">
-                <details>
-                    <summary><span>🌿 防风</span><span class="herb-name-latin">(Fangfeng)</span></summary>
-                    <div class="herb-content">
-                        <div class="info-row">
-                            <div class="info-label">药性与归经</div>
-                            <div class="info-value">
-                                <span class="tag-property warm" onclick="filterProperty('温', '防风-温')">微温</span>
-                                <span class="tag-flavor" onclick="filterFlavor('辛', '防风-辛')">辛</span>
-                                <span class="tag-flavor" onclick="filterFlavor('甘', '防风-甘')">甘</span> ➔ 
-                                <span class="tag-channel" onclick="filterChannel('膀胱经', '防风-膀胱经')">膀胱经</span>
-                                <span class="tag-channel" onclick="filterChannel('肝经', '防风-肝经')">肝经</span>
-                                <span class="tag-channel" onclick="filterChannel('脾经', '防风-脾经')">脾经</span>
+                    <!-- 荆芥 -->
+                    <div class="herb-card" id="herb-荆芥" data-properties="温" data-flavors="辛" data-channels="肺经 肝经">
+                        <details>
+                            <summary><span>🌿 荆芥</span><span class="herb-name-latin">(Jingjie)</span></summary>
+                            <div class="herb-content">
+                                <div class="info-row">
+                                    <div class="info-label">药性与归经</div>
+                                    <div class="info-value">
+                                        <span class="tag-property warm" onclick="filterProperty('温', '荆芥-温')">微温</span>
+                                        <span class="tag-flavor" onclick="filterFlavor('辛', '荆芥-辛')">辛</span> ➔ 
+                                        <span class="tag-channel" onclick="filterChannel('肺经', '荆芥-肺经')">肺经</span>
+                                        <span class="tag-channel" onclick="filterChannel('肝经', '荆芥-肝经')">肝经</span>
+                                    </div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-label">主要功效</div>
+                                    <div class="info-value" style="font-weight: bold; color: #c0392b;">发表散风，透疹消疮，炒炭止血。</div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-label">核心串联</div>
+                                    <div class="info-value">药性微温不燥，为“风药中之气药”，风寒风热表证皆可配伍（如 <a href="#" class="formula-link">银翘散</a>、<a href="#" class="formula-link">荆防败毒散</a>）。荆芥穗发表力强；炒炭可收敛止血。</div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">主要功效</div>
-                            <div class="info-value" style="font-weight: bold; color: #c0392b;">祛风解表，胜湿止痛，止痉，止泻。</div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">核心方剂</div>
-                            <div class="info-value">“风药中之润剂”。治风寒湿痹（如 <a href="#" class="formula-link">羌活胜湿汤</a>）；肝郁脾虚痛泻（如 <a href="#" class="formula-link">痛泻要方</a>）；破伤风抽搐（如 <a href="#" class="formula-link">玉真散</a>）。</div>
-                        </div>
+                        </details>
                     </div>
-                </details>
-            </div>
 
-            <!-- 羌活 -->
-            <div class="herb-card" data-properties="温" data-flavors="辛 苦" data-channels="膀胱经 肾经">
-                <details>
-                    <summary><span>🌿 羌活</span><span class="herb-name-latin">(Qianghuo)</span></summary>
-                    <div class="herb-content">
-                        <div class="info-row">
-                            <div class="info-label">药性与归经</div>
-                            <div class="info-value">
-                                <span class="tag-property warm" onclick="filterProperty('温', '羌活-温')">温</span>
-                                <span class="tag-flavor" onclick="filterFlavor('辛', '羌活-辛')">辛</span>
-                                <span class="tag-flavor" onclick="filterFlavor('苦', '羌活-苦')">苦</span> ➔ 
-                                <span class="tag-channel" onclick="filterChannel('膀胱经', '羌活-膀胱经')">膀胱经</span>
-                                <span class="tag-channel" onclick="filterChannel('肾经', '羌活-肾经')">肾经</span>
+                    <!-- 防风 -->
+                    <div class="herb-card" id="herb-防风" data-properties="温" data-flavors="辛 甘" data-channels="膀胱经 肝经 脾经">
+                        <details>
+                            <summary><span>🌿 防风</span><span class="herb-name-latin">(Fangfeng)</span></summary>
+                            <div class="herb-content">
+                                <div class="info-row">
+                                    <div class="info-label">药性与归经</div>
+                                    <div class="info-value">
+                                        <span class="tag-property warm" onclick="filterProperty('温', '防风-温')">微温</span>
+                                        <span class="tag-flavor" onclick="filterFlavor('辛', '防风-辛')">辛</span>
+                                        <span class="tag-flavor" onclick="filterFlavor('甘', '防风-甘')">甘</span> ➔ 
+                                        <span class="tag-channel" onclick="filterChannel('膀胱经', '防风-膀胱经')">膀胱经</span>
+                                        <span class="tag-channel" onclick="filterChannel('肝经', '防风-肝经')">肝经</span>
+                                        <span class="tag-channel" onclick="filterChannel('脾经', '防风-脾经')">脾经</span>
+                                    </div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-label">主要功效</div>
+                                    <div class="info-value" style="font-weight: bold; color: #c0392b;">祛风解表，胜湿止痛，止痉，止泻。</div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-label">核心方剂</div>
+                                    <div class="info-value">“风药中之润剂”。治风寒湿痹（如 <a href="#" class="formula-link">羌活胜湿汤</a>）；肝郁脾虚痛泻（如 <a href="#" class="formula-link">痛泻要方</a>）；破伤风抽搐（如 <a href="#" class="formula-link">玉真散</a>）。</div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">主要功效</div>
-                            <div class="info-value" style="font-weight: bold; color: #c0392b;">解表散寒，祛风胜湿，止痛。</div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">核心串联</div>
-                            <div class="info-value">善治上半身及太阳经风寒湿痹、头痛（如 <a href="#" class="formula-link">九味羌活汤</a>）。气味浓烈，多服易伤胃。</div>
-                        </div>
+                        </details>
                     </div>
-                </details>
-            </div>
 
-            <!-- 白芷 -->
-            <div class="herb-card" data-properties="温" data-flavors="辛" data-channels="肺经 胃经 大肠经">
-                <details>
-                    <summary><span>🌿 白芷</span><span class="herb-name-latin">(Baizhi)</span></summary>
-                    <div class="herb-content">
-                        <div class="info-row">
-                            <div class="info-label">药性与归经</div>
-                            <div class="info-value">
-                                <span class="tag-property warm" onclick="filterProperty('温', '白芷-温')">温</span>
-                                <span class="tag-flavor" onclick="filterFlavor('辛', '白芷-辛')">辛</span> ➔ 
-                                <span class="tag-channel" onclick="filterChannel('肺经', '白芷-肺经')">肺经</span>
-                                <span class="tag-channel" onclick="filterChannel('胃经', '白芷-胃经')">胃经</span>
-                                <span class="tag-channel" onclick="filterChannel('大肠经', '白芷-大肠经')">大肠经</span>
+                    <!-- 羌活 -->
+                    <div class="herb-card" id="herb-羌活" data-properties="温" data-flavors="辛 苦" data-channels="膀胱经 肾经">
+                        <details>
+                            <summary><span>🌿 羌活</span><span class="herb-name-latin">(Qianghuo)</span></summary>
+                            <div class="herb-content">
+                                <div class="info-row">
+                                    <div class="info-label">药性与归经</div>
+                                    <div class="info-value">
+                                        <span class="tag-property warm" onclick="filterProperty('温', '羌活-温')">温</span>
+                                        <span class="tag-flavor" onclick="filterFlavor('辛', '羌活-辛')">辛</span>
+                                        <span class="tag-flavor" onclick="filterFlavor('苦', '羌活-苦')">苦</span> ➔ 
+                                        <span class="tag-channel" onclick="filterChannel('膀胱经', '羌活-膀胱经')">膀胱经</span>
+                                        <span class="tag-channel" onclick="filterChannel('肾经', '羌活-肾经')">肾经</span>
+                                    </div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-label">主要功效</div>
+                                    <div class="info-value" style="font-weight: bold; color: #c0392b;">解表散寒，祛风胜湿，止痛。</div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-label">核心串联</div>
+                                    <div class="info-value">善治上半身及太阳经风寒湿痹、头痛（如 <a href="#" class="formula-link">九味羌活汤</a>）。气味浓烈，多服易伤胃。</div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">主要功效</div>
-                            <div class="info-value" style="font-weight: bold; color: #c0392b;">解表散寒，祛风止痛，通鼻窍，燥湿止带，消肿排脓。</div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">核心串联</div>
-                            <div class="info-value">阳明头痛、眉棱骨痛要药（如 <a href="#" class="formula-link">都梁丸</a>）；治寒湿带下。</div>
-                        </div>
+                        </details>
                     </div>
-                </details>
-            </div>
 
-            <!-- 细辛 -->
-            <div class="herb-card" data-properties="热" data-flavors="辛" data-channels="肺经 肾经 心经">
-                <details>
-                    <summary><span>🌿 细辛</span><span class="herb-name-latin">(Xixin)</span></summary>
-                    <div class="herb-content">
-                        <div class="info-row">
-                            <div class="info-label">药性与归经</div>
-                            <div class="info-value">
-                                <span class="tag-property warm" onclick="filterProperty('热', '细辛-热')">温(偏热)</span>
-                                <span class="tag-flavor" onclick="filterFlavor('辛', '细辛-辛')">辛</span> ➔ 
-                                <span class="tag-channel" onclick="filterChannel('肺经', '细辛-肺经')">肺经</span>
-                                <span class="tag-channel" onclick="filterChannel('肾经', '细辛-肾经')">肾经</span>
-                                <span class="tag-channel" onclick="filterChannel('心经', '细辛-心经')">心经</span>
+                    <!-- 白芷 -->
+                    <div class="herb-card" id="herb-白芷" data-properties="温" data-flavors="辛" data-channels="肺经 胃经 大肠经">
+                        <details>
+                            <summary><span>🌿 白芷</span><span class="herb-name-latin">(Baizhi)</span></summary>
+                            <div class="herb-content">
+                                <div class="info-row">
+                                    <div class="info-label">药性与归经</div>
+                                    <div class="info-value">
+                                        <span class="tag-property warm" onclick="filterProperty('温', '白芷-温')">温</span>
+                                        <span class="tag-flavor" onclick="filterFlavor('辛', '白芷-辛')">辛</span> ➔ 
+                                        <span class="tag-channel" onclick="filterChannel('肺经', '白芷-肺经')">肺经</span>
+                                        <span class="tag-channel" onclick="filterChannel('胃经', '白芷-胃经')">胃经</span>
+                                        <span class="tag-channel" onclick="filterChannel('大肠经', '白芷-大肠经')">大肠经</span>
+                                    </div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-label">主要功效</div>
+                                    <div class="info-value" style="font-weight: bold; color: #c0392b;">解表散寒，祛风止痛，通鼻窍，燥湿止带，消肿排脓。</div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-label">核心串联</div>
+                                    <div class="info-value">阳明头痛、眉棱骨痛要药（如 <a href="#" class="formula-link">都梁丸</a>）；治寒湿带下。</div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">主要功效</div>
-                            <div class="info-value" style="font-weight: bold; color: #c0392b;">解表散寒，祛风止痛，通窍，温肺化饮。</div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">核心串联</div>
-                            <div class="info-value">少阴太阳两感表证之主药（如 <a href="#" class="formula-link">麻黄附子细辛汤</a>）；温肺化饮要药（如 <a href="#" class="formula-link">小青龙汤</a>）。<span style="color:var(--danger-color); font-weight:bold;">⚠️十八反：诸参辛芍叛藜芦。古称“细辛不过钱”（散剂宜慎）。</span></div>
-                        </div>
+                        </details>
                     </div>
-                </details>
-            </div>
-
-            <!-- 藁本 -->
-            <div class="herb-card" data-properties="温" data-flavors="辛" data-channels="膀胱经">
-                <details>
-                    <summary><span>🌿 藁本</span><span class="herb-name-latin">(Gaoben)</span></summary>
-                    <div class="herb-content">
-                        <div class="info-row">
-                            <div class="info-label">药性与归经</div>
-                            <div class="info-value">
-                                <span class="tag-property warm" onclick="filterProperty('温', '藁本-温')">温</span>
-                                <span class="tag-flavor" onclick="filterFlavor('辛', '藁本-辛')">辛</span> ➔ 
-                                <span class="tag-channel" onclick="filterChannel('膀胱经', '藁本-膀胱经')">膀胱经</span>
-                            </div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">主要功效</div>
-                            <div class="info-value" style="font-weight: bold; color: #c0392b;">发表散寒，祛风胜湿，止痛。</div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">核心串联</div>
-                            <div class="info-value">善达巅顶，主治太阳巅顶头痛（如配高本、独活，常与羌活协同）。</div>
-                        </div>
-                    </div>
-                </details>
-            </div>
-
-            <!-- 苍耳子 -->
-            <div class="herb-card" data-properties="温" data-flavors="辛 苦" data-channels="肺经">
-                <details>
-                    <summary><span>🌿 苍耳子</span><span class="herb-name-latin">(Cangerzi)</span></summary>
-                    <div class="herb-content">
-                        <div class="info-row">
-                            <div class="info-label">药性与归经</div>
-                            <div class="info-value">
-                                <span class="tag-property warm" onclick="filterProperty('温', '苍耳子-温')">温</span>
-                                <span class="tag-flavor" onclick="filterFlavor('辛', '苍耳子-辛')">辛</span>
-                                <span class="tag-flavor" onclick="filterFlavor('苦', '苍耳子-苦')">苦</span> ➔ 
-                                <span class="tag-channel" onclick="filterChannel('肺经', '苍耳子-肺经')">肺经</span>
-                            </div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">主要功效</div>
-                            <div class="info-value" style="font-weight: bold; color: #c0392b;">散风寒，通鼻窍，祛风湿，止痒。</div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">核心串联</div>
-                            <div class="info-value">鼻渊鼻塞头痛主药（如 <a href="#" class="formula-link">苍耳子散</a>）。<span style="color:var(--danger-color)">⚠️注意：本品有小毒，过量易中毒。</span></div>
-                        </div>
-                    </div>
-                </details>
-            </div>
-
-            <!-- 辛夷 -->
-            <div class="herb-card" data-properties="温" data-flavors="辛" data-channels="肺经 胃经">
-                <details>
-                    <summary><span>🌿 辛夷</span><span class="herb-name-latin">(Xinyi)</span></summary>
-                    <div class="herb-content">
-                        <div class="info-row">
-                            <div class="info-label">药性与归经</div>
-                            <div class="info-value">
-                                <span class="tag-property warm" onclick="filterProperty('温', '辛夷-温')">温</span>
-                                <span class="tag-flavor" onclick="filterFlavor('辛', '辛夷-辛')">辛</span> ➔ 
-                                <span class="tag-channel" onclick="filterChannel('肺经', '辛夷-肺经')">肺经</span>
-                                <span class="tag-channel" onclick="filterChannel('胃经', '辛夷-胃经')">胃经</span>
-                            </div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">主要功效</div>
-                            <div class="info-value" style="font-weight: bold; color: #c0392b;">发散风寒，通鼻窍。</div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">用法注意</div>
-                            <div class="info-value">专治鼻塞、鼻渊。因本品有毛茸，刺激咽喉，<span style="color:var(--danger-color); font-weight:bold;">⚠️入汤剂宜“包煎”</span>。</div>
-                        </div>
-                    </div>
-                </details>
-            </div>
-
-
-            <!-- ================= 辛凉解表药 ================= -->
-            <div class="subsection-title">二、辛凉解表药（发散风热药）</div>
-
-            <!-- 薄荷 -->
-            <div class="herb-card" data-properties="凉" data-flavors="辛" data-channels="肺经 肝经">
-                <details>
-                    <summary><span>🌿 薄荷</span><span class="herb-name-latin">(Bohe)</span></summary>
-                    <div class="herb-content">
-                        <div class="info-row">
-                            <div class="info-label">药性与归经</div>
-                            <div class="info-value">
-                                <span class="tag-property cool" onclick="filterProperty('凉', '薄荷-凉')">凉</span>
-                                <span class="tag-flavor" onclick="filterFlavor('辛', '薄荷-辛')">辛</span> ➔ 
-                                <span class="tag-channel" onclick="filterChannel('肺经', '薄荷-肺经')">肺经</span>
-                                <span class="tag-channel" onclick="filterChannel('肝经', '薄荷-肝经')">肝经</span>
-                            </div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">主要功效</div>
-                            <div class="info-value" style="font-weight: bold; color: #3498db;">疏散风热，清利头目，利咽，透疹，疏肝行气。</div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">核心串联</div>
-                            <div class="info-value">风热感冒、咽痛核心药（如 <a href="#" class="formula-link">银翘散</a>）；亦可协同疏肝（如 <a href="#" class="formula-link">逍遥散</a>）。<span style="color:var(--danger-color); font-weight:bold;">⚠️煎法：芳香易挥发，宜“后下”。</span></div>
-                        </div>
-                    </div>
-                </details>
-            </div>
-
-            <!-- 牛蒡子 -->
-            <div class="herb-card" data-properties="寒" data-flavors="辛 苦" data-channels="肺经 胃经">
-                <details>
-                    <summary><span>🌿 牛蒡子</span><span class="herb-name-latin">(Niubangzi)</span></summary>
-                    <div class="herb-content">
-                        <div class="info-row">
-                            <div class="info-label">药性与归经</div>
-                            <div class="info-value">
-                                <span class="tag-property cool" onclick="filterProperty('寒', '牛蒡子-寒')">寒</span>
-                                <span class="tag-flavor" onclick="filterFlavor('辛', '牛蒡子-辛')">辛</span>
-                                <span class="tag-flavor" onclick="filterFlavor('苦', '牛蒡子-苦')">苦</span> ➔ 
-                                <span class="tag-channel" onclick="filterChannel('肺经', '牛蒡子-肺经')">肺经</span>
-                                <span class="tag-channel" onclick="filterChannel('胃经', '牛蒡子-胃经')">胃经</span>
-                            </div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">主要功效</div>
-                            <div class="info-value" style="font-weight: bold; color: #3498db;">疏散风热，宣肺透疹，利咽散结，解毒消肿。</div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">核心串联</div>
-                            <div class="info-value">咽喉肿痛、痄腮之要药（如 <a href="#" class="formula-link">普济消毒饮</a>）。性寒滑肠，气虚便溏者忌用。</div>
-                        </div>
-                    </div>
-                </details>
-            </div>
-
-            <!-- 蝉蜕 -->
-            <div class="herb-card" data-properties="寒" data-flavors="甘" data-channels="肺经 肝经">
-                <details>
-                    <summary><span>🌿 蝉蜕</span><span class="herb-name-latin">(Chantui)</span></summary>
-                    <div class="herb-content">
-                        <div class="info-row">
-                            <div class="info-label">药性与归经</div>
-                            <div class="info-value">
-                                <span class="tag-property cool" onclick="filterProperty('寒', '蝉蜕-寒')">微寒</span>
-                                <span class="tag-flavor" onclick="filterFlavor('甘', '蝉蜕-甘')">甘</span> ➔ 
-                                <span class="tag-channel" onclick="filterChannel('肺经', '蝉蜕-肺经')">肺经</span>
-                                <span class="tag-channel" onclick="filterChannel('肝经', '蝉蜕-肝经')">肝经</span>
-                            </div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">主要功效</div>
-                            <div class="info-value" style="font-weight: bold; color: #3498db;">疏散风热，利咽，透疹，明目退翳，息风止痉。</div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">核心串联</div>
-                            <div class="info-value">主治风热失音、小儿惊哭夜啼、破伤风（如 <a href="#" class="formula-link">五虎追风散</a>）。</div>
-                        </div>
-                    </div>
-                </details>
-            </div>
-
-            <!-- 桑叶 -->
-            <div class="herb-card" data-properties="寒" data-flavors="苦 甘" data-channels="肺经 肝经">
-                <details>
-                    <summary><span>🌿 桑叶</span><span class="herb-name-latin">(Sangye)</span></summary>
-                    <div class="herb-content">
-                        <div class="info-row">
-                            <div class="info-label">药性与归经</div>
-                            <div class="info-value">
-                                <span class="tag-property cool" onclick="filterProperty('寒', '桑叶-寒')">寒</span>
-                                <span class="tag-flavor" onclick="filterFlavor('苦', '桑叶-苦')">苦</span>
-                                <span class="tag-flavor" onclick="filterFlavor('甘', '桑叶-甘')">甘</span> ➔ 
-                                <span class="tag-channel" onclick="filterChannel('肺经', '桑叶-肺经')">肺经</span>
-                                <span class="tag-channel" onclick="filterChannel('肝经', '桑叶-肝经')">肝经</span>
-                            </div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">主要功效</div>
-                            <div class="info-value" style="font-weight: bold; color: #3498db;">疏散风热，清肺润燥，清肝明目，凉血止血。</div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">核心串联</div>
-                            <div class="info-value">燥热伤肺咳嗽要药（如 <a href="#" class="formula-link">桑杏汤</a>、<a href="#" class="formula-link">桑菊饮</a>）。</div>
-                        </div>
-                    </div>
-                </details>
-            </div>
-
-            <!-- 菊花 -->
-            <div class="herb-card" data-properties="寒" data-flavors="辛 苦 甘" data-channels="肺经 肝经">
-                <details>
-                    <summary><span>🌿 菊花</span><span class="herb-name-latin">(Juhua)</span></summary>
-                    <div class="herb-content">
-                        <div class="info-row">
-                            <div class="info-label">药性与归经</div>
-                            <div class="info-value">
-                                <span class="tag-property cool" onclick="filterProperty('寒', '菊花-寒')">微寒</span>
-                                <span class="tag-flavor" onclick="filterFlavor('辛', '菊花-辛')">辛</span>
-                                <span class="tag-flavor" onclick="filterFlavor('苦', '菊花-苦')">苦</span>
-                                <span class="tag-flavor" onclick="filterFlavor('甘', '菊花-甘')">甘</span> ➔ 
-                                <span class="tag-channel" onclick="filterChannel('肺经', '菊花-肺经')">肺经</span>
-                                <span class="tag-channel" onclick="filterChannel('肝经', '菊花-肝经')">肝经</span>
-                            </div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">主要功效</div>
-                            <div class="info-value" style="font-weight: bold; color: #3498db;">疏散风热，平息肝风，清肝明目，清热解毒。</div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">核心别辨</div>
-                            <div class="info-value">与桑叶常相须为用。桑叶偏清肺润燥；菊花偏清肝平肝（如 <a href="#" class="formula-link">杞菊地黄丸</a>）。</div>
-                        </div>
-                    </div>
-                </details>
-            </div>
-
-            <!-- 柴胡 -->
-            <div class="herb-card" data-properties="凉" data-flavors="苦 辛" data-channels="肝经 胆经">
-                <details>
-                    <summary><span>🌿 柴胡</span><span class="herb-name-latin">(Chaihu)</span></summary>
-                    <div class="herb-content">
-                        <div class="info-row">
-                            <div class="info-label">药性与归经</div>
-                            <div class="info-value">
-                                <span class="tag-property cool" onclick="filterProperty('凉', '柴胡-凉')">微寒</span>
-                                <span class="tag-flavor" onclick="filterFlavor('苦', '柴胡-苦')">苦</span>
-                                <span class="tag-flavor" onclick="filterFlavor('辛', '柴胡-辛')">辛</span> ➔ 
-                                <span class="tag-channel" onclick="filterChannel('肝经', '柴胡-肝经')">肝经</span>
-                                <span class="tag-channel" onclick="filterChannel('胆经', '柴胡-胆经')">胆经</span>
-                            </div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">主要功效</div>
-                            <div class="info-value" style="font-weight: bold; color: #3498db;">疏散退热，疏肝解郁，升阳举陷。</div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">核心方剂</div>
-                            <div class="info-value">伤寒少阳证、寒热往来之要药（如 <a href="#" class="formula-link">小柴胡汤</a>）；疏肝解郁主药（如 <a href="#" class="formula-link">逍遥散</a>）；中气下陷提举药（如 <a href="#" class="formula-link">补中益气汤</a>）。</div>
-                        </div>
-                    </div>
-                </details>
-            </div>
-
-            <!-- 升麻 -->
-            <div class="herb-card" data-properties="寒" data-flavors="辛 苦" data-channels="肺经 脾经 胃经 大肠经">
-                <details>
-                    <summary><span>🌿 升麻</span><span class="herb-name-latin">(Shengma)</span></summary>
-                    <div class="herb-content">
-                        <div class="info-row">
-                            <div class="info-label">药性与归经</div>
-                            <div class="info-value">
-                                <span class="tag-property cool" onclick="filterProperty('寒', '升麻-寒')">微寒</span>
-                                <span class="tag-flavor" onclick="filterFlavor('辛', '升麻-辛')">辛</span>
-                                <span class="tag-flavor" onclick="filterFlavor('苦', '升麻-苦')">苦</span> ➔ 
-                                <span class="tag-channel" onclick="filterChannel('肺经', '升麻-肺经')">肺经</span>
-                                <span class="tag-channel" onclick="filterChannel('脾经', '升麻-脾经')">脾经</span>
-                                <span class="tag-channel" onclick="filterChannel('胃经', '升麻-胃经')">胃经</span>
-                                <span class="tag-channel" onclick="filterChannel('大肠经', '升麻-大肠经')">大肠经</span>
-                            </div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">主要功效</div>
-                            <div class="info-value" style="font-weight: bold; color: #3498db;">发表透疹，清热解毒，升阳举陷。</div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">别辨串联</div>
-                            <div class="info-value">善治阳明热毒、胃火牙痛（如 <a href="#" class="formula-link">清胃散</a>）。常协同柴胡升阳举陷。</div>
-                        </div>
-                    </div>
-                </details>
-            </div>
-
-            <!-- 葛根 -->
-            <div class="herb-card" data-properties="凉" data-flavors="甘 辛" data-channels="脾经 胃经">
-                <details>
-                    <summary><span>🌿 葛根</span><span class="herb-name-latin">(Gegen)</span></summary>
-                    <div class="herb-content">
-                        <div class="info-row">
-                            <div class="info-label">药性与归经</div>
-                            <div class="info-value">
-                                <span class="tag-property cool" onclick="filterProperty('凉', '葛根-凉')">凉</span>
-                                <span class="tag-flavor" onclick="filterFlavor('甘', '葛根-甘')">甘</span>
-                                <span class="tag-flavor" onclick="filterFlavor('辛', '葛根-辛')">辛</span> ➔ 
-                                <span class="tag-channel" onclick="filterChannel('脾经', '葛根-脾经')">脾经</span>
-                                <span class="tag-channel" onclick="filterChannel('胃经', '葛根-胃经')">胃经</span>
-                            </div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">主要功效</div>
-                            <div class="info-value" style="font-weight: bold; color: #3498db;">解肌退热，透疹，生津止渴，升阳止泻。</div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">核心串联</div>
-                            <div class="info-value">外感表证、项背强痛之要药（如 <a href="#" class="formula-link">葛根汤</a>）；热泻热痢要药（如 <a href="#" class="formula-link">葛根芩连汤</a>）。</div>
-                        </div>
-                    </div>
-                </details>
-            </div>
-
-            <!-- 蔓荆子 -->
-            <div class="herb-card" data-properties="凉" data-flavors="辛 苦" data-channels="膀胱经 肝经 胃经">
-                <details>
-                    <summary><span>🌿 蔓荆子</span><span class="herb-name-latin">(Manjingzi)</span></summary>
-                    <div class="herb-content">
-                        <div class="info-row">
-                            <div class="info-label">药性与归经</div>
-                            <div class="info-value">
-                                <span class="tag-property cool" onclick="filterProperty('凉', '蔓荆子-凉')">微凉</span>
-                                <span class="tag-flavor" onclick="filterFlavor('辛', '蔓荆子-辛')">辛</span>
-                                <span class="tag-flavor" onclick="filterFlavor('苦', '蔓荆子-苦')">苦</span> ➔ 
-                                <span class="tag-channel" onclick="filterChannel('膀胱经', '蔓荆子-膀胱经')">膀胱经</span>
-                                <span class="tag-channel" onclick="filterChannel('肝经', '蔓荆子-肝经')">肝经</span>
-                                <span class="tag-channel" onclick="filterChannel('胃经', '蔓荆子-胃经')">胃经</span>
-                            </div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">主要功效</div>
-                            <div class="info-value" style="font-weight: bold; color: #3498db;">疏散风热，清利头目，祛风止痛。</div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">核心串联</div>
-                            <div class="info-value">善治风热头痛、头昏目暗、目赤多泪（如 <a href="#" class="formula-link">羌活胜湿汤</a>）。</div>
-                        </div>
-                    </div>
-                </details>
-            </div>
-
-            <!-- 淡豆豉 -->
-            <div class="herb-card" data-properties="凉" data-flavors="苦 辛" data-channels="肺经 胃经">
-                <details>
-                    <summary><span>🌿 淡豆豉</span><span class="herb-name-latin">(Dandouchi)</span></summary>
-                    <div class="herb-content">
-                        <div class="info-row">
-                            <div class="info-label">药性与归经</div>
-                            <div class="info-value">
-                                <span class="tag-property cool" onclick="filterProperty('凉', '淡豆豉-凉')">凉(平)</span>
-                                <span class="tag-flavor" onclick="filterFlavor('苦', '淡豆豉-苦')">苦</span>
-                                <span class="tag-flavor" onclick="filterFlavor('辛', '淡豆豉-辛')">辛</span> ➔ 
-                                <span class="tag-channel" onclick="filterChannel('肺经', '淡豆豉-肺经')">肺经</span>
-                                <span class="tag-channel" onclick="filterChannel('胃经', '淡豆豉-胃经')">胃经</span>
-                            </div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">主要功效</div>
-                            <div class="info-value" style="font-weight: bold; color: #3498db;">解表，除烦，宣发郁热。</div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">核心方剂</div>
-                            <div class="info-value">外感热病、虚烦不眠之主药（如 <a href="#" class="formula-link">栀子豉汤</a>）；解表散热（如 <a href="#" class="formula-link">银翘散</a>）。</div>
-                        </div>
-                    </div>
-                </details>
-            </div>
-
-            <!-- 浮萍 -->
-            <div class="herb-card" data-properties="寒" data-flavors="辛" data-channels="肺经 膀胱经">
-                <details>
-                    <summary><span>🌿 浮萍</span><span class="herb-name-latin">(Fuping)</span></summary>
-                    <div class="herb-content">
-                        <div class="info-row">
-                            <div class="info-label">药性与归经</div>
-                            <div class="info-value">
-                                <span class="tag-property cool" onclick="filterProperty('寒', '浮萍-寒')">寒</span>
-                                <span class="tag-flavor" onclick="filterFlavor('辛', '浮萍-辛')">辛</span> ➔ 
-                                <span class="tag-channel" onclick="filterChannel('肺经', '浮萍-肺经')">肺经</span>
-                                <span class="tag-channel" onclick="filterChannel('膀胱经', '浮萍-膀胱经')">膀胱经</span>
-                            </div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">主要功效</div>
-                            <div class="info-value" style="font-weight: bold; color: #3498db;">发汗透疹，祛风止痒，利水消肿。</div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">临床释意</div>
-                            <div class="info-value">发汗力强，主治风水水肿、瘾疹瘙痒、麻疹不透。</div>
-                        </div>
-                    </div>
-                </details>
-            </div>
-
-        </div>
+                </div> <!-- End herb-main-content -->
+            </div> <!-- End herb-layout -->
+        </div> <!-- End tcm-herb -->
 
         <!-- ================= 模块四：方剂学 ================= -->
         <div id="tcm-formula" class="subject-content-section">
             <div class="nav-info">当前位置：总知识库 ➔ 方剂学</div>
-            <div class="section-title">方剂学 (方歌与配伍)</div>
-            <div class="empty-notice">✨ 模块已建立！等待我们后续一起讨论并添加方剂笔记（如麻黄汤、桂枝汤之君臣佐使与方歌）...</div>
+            <div class="section-title">方剂学 (方剂)</div>
+            <div class="empty-notice">✨ 模块已建立！后期我们将把这边的药物与其对应的主治方剂（如麻黄汤、桂枝汤）深度串联绑定。</div>
         </div>
 
         <!-- ================= 模块五：针灸学 ================= -->
         <div id="tcm-acu" class="subject-content-section">
             <div class="nav-info">当前位置：总知识库 ➔ 针灸学</div>
-            <div class="section-title">针灸学 (经络腧穴)</div>
-            <div class="empty-notice">✨ 模块已建立！等待我们后续一起讨论并添加针灸笔记（如十四经脉走形、特定穴要点等）...</div>
+            <div class="section-title">针灸学</div>
+            <div class="empty-notice">✨ 模块已建立！支持后续扩充腧穴及针灸治疗学理论。</div>
         </div>
 
-    </div>
+    </div> <!-- End container -->
 
-    <!-- 右下角悬浮菜单栏 -->
-    <div class="floating-menu-container">
+    <!-- 右下角悬浮说明栏 -->
+    <div class="floating-menu-container" id="floatMenu">
         <div class="menu-panel">
-            <h4>💡 串联记诵法诀</h4>
+            <h4>💡 快速研习指南</h4>
             <div class="menu-section">
-                <strong>【十八反歌诀】</strong>
-                <p>本草明言十八反，半蒌贝蔹笈攻乌。</p>
-                <p>藻戟遂芫俱战草，诸参辛芍叛藜芦。</p>
+                <strong>1. 学科切换：</strong> 点击最上方的大卡片可在中基、中诊、中药间自如切换。
             </div>
             <div class="menu-section">
-                <strong>【十九畏歌诀】</strong>
-                <p>硫黄原是绿矾亲，水银莫与砒霜见。</p>
-                <p>狼毒最怕密陀僧，巴豆性烈畏牵牛。</p>
-                <p>丁香莫与郁金见，牙硝难嫌三棱贱。</p>
-                <p>官桂善能倒石脂，人参见人甚不战。</p>
+                <strong>2. 菜单导航：</strong> 中药学模块左侧新增了四级折叠菜单，点击能快速定位并高亮特定药品。
             </div>
-            <div class="menu-tips">
-                📌 遇到同流派或有配伍禁忌的药材时，系统会自动进行高亮警示，请务必注意临床配伍安全！
+            <div class="menu-section">
+                <strong>3. 动态筛选：</strong> 点击卡片里的任一【药性】【药味】如“辛”或“肺经”，全库会自动帮你筛出相同特征的药！
             </div>
         </div>
-        <button class="floating-btn">知识<br>掌故</button>
+        <button class="floating-btn" onclick="document.getElementById('floatMenu').classList.toggle('active')">研习<br>助手</button>
     </div>
 
-    <!-- ================= 完美的 JavaScript 核心逻辑系统 ================= -->
     <script>
-        let studiedTags = new Set();
-        const totalCorePoints = 35; // 扩大了考点总容量
+        // 核心足迹统计变量
+        const learnedTracks = new Set();
+        const totalPoints = 30; // 虚拟核心考点目标数
 
-        window.onload = function() {
-            const defaultCard = document.querySelector(".modules-grid .module-card:nth-child(3)");
-            switchModule('tcm-herb', defaultCard);
-        };
-
-        function switchModule(moduleId, element) {
-            document.querySelectorAll('.subject-content-section').forEach(sec => {
-                sec.classList.remove('active');
-            });
-            document.querySelectorAll('.module-card').forEach(card => {
-                card.classList.remove('active');
-            });
-            const targetSec = document.getElementById(moduleId);
-            if(targetSec) targetSec.classList.add('active');
-            if(element) element.classList.add('active');
+        // 学科大模块切换
+        function switchModule(moduleId, cardElement) {
+            document.querySelectorAll('.subject-content-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.module-card').forEach(card => card.classList.remove('active'));
+            
+            document.getElementById(moduleId).classList.add('active');
+            if(cardElement) cardElement.classList.add('active');
         }
 
-        function saveTrack(category, itemName, desc) {
-            const trackKey = `${category}-${itemName}-${desc}`;
-            const trackerList = document.getElementById('tracker-list');
-            const noDataLi = trackerList.querySelector('.no-data');
-            if (noDataLi) noDataLi.remove();
+        // 新增：树状菜单节点折叠控制
+        function toggleNode(element) {
+            event.stopPropagation();
+            const node = element.parentElement;
+            node.classList.toggle('open');
+        }
+
+        // 新增：点击四级菜单精准滚动并高亮特定中药
+        function scrollToHerb(herbName) {
+            event.stopPropagation();
+            const target = document.getElementById('herb-' + herbName);
+            if (target) {
+                clearFilter();
+                // 打开 details 组件以便看到内部信息
+                const details = target.querySelector('details');
+                if(details) details.open = true;
+
+                // 滚动至视图
+                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                // 添加高亮特效
+                target.classList.add('highlighted');
+                setTimeout(() => {
+                    target.classList.remove('highlighted');
+                }, 2000);
+            }
+        }
+
+        // 全库属性过滤引擎 (按药性)
+        function filterProperty(propName, label) {
+            event.stopPropagation();
+            addTrack(label);
+            showFilterBar(`当前正在筛查药性为【${propName}】的药物`);
+            
+            document.querySelectorAll('.herb-card').forEach(card => {
+                const props = card.getAttribute('data-properties') || '';
+                if(props.includes(propName)) {
+                    card.classList.remove('dimmed');
+                    card.querySelector('details').open = true;
+                } else {
+                    card.classList.add('dimmed');
+                }
+            });
+        }
+
+        // 全库属性过滤引擎 (按药味)
+        function filterFlavor(flavorName, label) {
+            event.stopPropagation();
+            addTrack(label);
+            showFilterBar(`当前正在筛查药味包含【${flavorName}】的药物`);
+            
+            document.querySelectorAll('.herb-card').forEach(card => {
+                const flavors = card.getAttribute('data-flavors') || '';
+                if(flavors.includes(flavorName)) {
+                    card.classList.remove('dimmed');
+                    card.querySelector('details').open = true;
+                } else {
+                    card.classList.add('dimmed');
+                }
+            });
+        }
+
+        // 全库属性过滤引擎 (按归经)
+        function filterChannel(channelName, label) {
+            event.stopPropagation();
+            addTrack(label);
+            showFilterBar(`当前正在筛查归经属于【${channelName}】的药物`);
+            
+            document.querySelectorAll('.herb-card').forEach(card => {
+                const channels = card.getAttribute('data-channels') || '';
+                if(channels.includes(channelName)) {
+                    card.classList.remove('dimmed');
+                    card.querySelector('details').open = true;
+                } else {
+                    card.classList.add('dimmed');
+                }
+            });
+        }
+
+        function showFilterBar(text) {
+            const bar = document.getElementById('filterBar');
+            document.getElementById('filterDesc').innerText = text;
+            bar.style.display = 'flex';
+        }
+
+        function clearFilter() {
+            document.getElementById('filterBar').style.style = 'none';
+            document.getElementById('filterBar').style.display = 'none';
+            document.querySelectorAll('.herb-card').forEach(card => {
+                card.classList.remove('dimmed');
+                card.querySelector('details').open = false;
+            });
+        }
+
+        // 记诵足迹系统逻辑
+        function addTrack(label) {
+            if(learnedTracks.has(label)) return;
+            learnedTracks.add(label);
+
+            // 更新足迹列表
+            const list = document.getElementById('tracker-list');
+            const noData = list.querySelector('.no-data');
+            if(noData) noData.remove();
 
             const now = new Date();
             const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
 
             const li = document.createElement('li');
             li.className = 'tracker-item';
-            li.innerHTML = `<span><strong>[${category}]</strong> ${itemName} - <span style="color:#7f8c8d;">${desc}</span></span><span class="tracker-time">${timeStr}</span>`;
-            trackerList.insertBefore(li, trackerList.firstChild);
+            li.innerHTML = `<span>⚡ 研习了 <b>${label}</b> 核心考点</span><span class="tracker-time">${timeStr}</span>`;
+            list.insertBefore(li, list.firstChild);
 
-            if (!studiedTags.has(trackKey)) {
-                studiedTags.add(trackKey);
-                const progressPercent = Math.min(Math.round((studiedTags.size / totalCorePoints) * 100), 100);
-                document.getElementById('progress-bar').style.width = progressPercent + '%';
-                document.getElementById('progress-text').innerText = progressPercent + '%';
-            }
+            // 更新进度条
+            const percent = Math.min(Math.round((learnedTracks.size / totalPoints) * 100), 100);
+            document.getElementById('progress-text').innerText = percent + '%';
+            document.getElementById('progress-bar').style.width = percent + '%';
         }
 
-        // 药性联动筛选
-        function filterProperty(prop, trackLabel) {
-            saveTrack('药性研习', prop, `深入分析带有【${prop}】性的药物临床病证`);
-
-            const filterBar = document.getElementById('filterBar');
-            const filterDesc = document.getElementById('filterDesc');
-            filterBar.style.display = 'flex';
-            filterDesc.innerText = `当前正在筛选药性：${prop}`;
-
-            document.querySelectorAll('.herb-card').forEach(card => {
-                const props = card.getAttribute('data-properties') || '';
-                if(props.includes(prop)) {
-                    card.classList.remove('dimmed');
-                    card.classList.add('highlighted');
-                    card.querySelector('details').open = true;
-                } else {
-                    card.classList.add('dimmed');
-                    card.classList.remove('highlighted');
-                    card.querySelector('details').open = false;
-                }
-            });
-        }
-
-        // 药味联动筛选
-        function filterFlavor(flavor, trackLabel) {
-            saveTrack('五味研习', flavor, `剖析【${flavor}】味代表的靶向治疗效应`);
-
-            const filterBar = document.getElementById('filterBar');
-            const filterDesc = document.getElementById('filterDesc');
-            filterBar.style.display = 'flex';
-            filterDesc.innerText = `当前正在筛选药味：${flavor}`;
-
-            document.querySelectorAll('.herb-card').forEach(card => {
-                const flavors = card.getAttribute('data-flavors') || '';
-                if(flavors.includes(flavor)) {
-                    card.classList.remove('dimmed');
-                    card.classList.add('highlighted');
-                    card.querySelector('details').open = true;
-                } else {
-                    card.classList.add('dimmed');
-                    card.classList.remove('highlighted');
-                    card.querySelector('details').open = false;
-                }
-            });
-        }
-
-        // 归经联动筛选
-        function filterChannel(channel, trackLabel) {
-            saveTrack('归经研习', channel, `探究药物入【${channel}】的临床脏腑定位`);
-
-            const filterBar = document.getElementById('filterBar');
-            const filterDesc = document.getElementById('filterDesc');
-            filterBar.style.display = 'flex';
-            filterDesc.innerText = `当前正在筛选归经：${channel}`;
-
-            document.querySelectorAll('.herb-card').forEach(card => {
-                const channels = card.getAttribute('data-channels') || '';
-                if(channels.includes(channel)) {
-                    card.classList.remove('dimmed');
-                    card.classList.add('highlighted');
-                    card.querySelector('details').open = true;
-                } else {
-                    card.classList.add('dimmed');
-                    card.classList.remove('highlighted');
-                    card.querySelector('details').open = false;
-                }
-            });
-        }
-
-        function clearFilter() {
-            document.getElementById('filterBar').style.display = 'none';
-            document.querySelectorAll('.herb-card').forEach(card => {
-                card.classList.remove('dimmed');
-                card.classList.remove('highlighted');
-                card.querySelector('details').open = false;
-            });
+        // 初始化默认选定中药学模块
+        window.onload = function() {
+            switchModule('tcm-herb', document.querySelectorAll('.module-card')[2]);
         }
     </script>
 </body>
