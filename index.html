@@ -633,6 +633,9 @@
 
     <script>
         // 设置预期要点击研习的核心知识点总数目标（可根据后续内容动态调整）
+        <!-- ====== 🟢 从这里开始粘贴覆盖 ====== -->
+    <script>
+        // 设置预期要点击研习的核心知识点总数目标
         const TOTAL_POINTS = 25;
 
         // 学科模块切换逻辑
@@ -657,10 +660,16 @@
         });
 
         // 悬浮菜单逻辑
-        function toggleMenu(event) { event.stopPropagation(); document.getElementById('floatingMenu').classList.toggle('active'); }
-        document.addEventListener('click', function(e) { const container = document.getElementById('floatingMenu'); if (!container.contains(e.target)) container.classList.remove('active'); });
+        function toggleMenu(event) { 
+            event.stopPropagation(); 
+            document.getElementById('floatingMenu').classList.toggle('active'); 
+        }
+        document.addEventListener('click', function(e) { 
+            const container = document.getElementById('floatingMenu'); 
+            if (!container.contains(e.target)) container.classList.remove('active'); 
+        });
 
-        // 新增：自动保存轨迹与计算进度的核心逻辑
+        // 自动保存轨迹与计算进度的核心逻辑
         function saveTrack(logName) {
             let history = JSON.parse(localStorage.getItem("lyy_herb_history")) || [];
             let uniquePoints = JSON.parse(localStorage.getItem("lyy_herb_unique")) || [];
@@ -668,82 +677,106 @@
             const now = new Date();
             const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
             
-            // 插入足迹队列顶部
+            // 1. 插入足迹队列顶部
             history.unshift({ name: logName, time: timeStr });
             if(history.length > 15) history.pop(); // 看板最多显示最近15条历史
+            localStorage.setItem("lyy_herb_history", JSON.stringify(history));
 
-            // 统计去重后的考点用于计算进度
+            // 2. 统计去重后的考点用于计算进度
             if (!uniquePoints.includes(logName)) {
                 uniquePoints.push(logName);
+                localStorage.setItem("lyy_herb_unique", JSON.stringify(uniquePoints));
             }
 
-            localStorage.setItem("lyy_herb_history", JSON.stringify(history));
-            localStorage.setItem("lyy_herb_unique", JSON.stringify(uniquePoints));
+            // 3. 重新渲染看板
             renderDashboard();
         }
 
-        // 新增：动态渲染看板和进度条
+        // 渲染数据看板
         function renderDashboard() {
             let history = JSON.parse(localStorage.getItem("lyy_herb_history")) || [];
             let uniquePoints = JSON.parse(localStorage.getItem("lyy_herb_unique")) || [];
 
-            const progressPercent = Math.min(Math.round((uniquePoints.length / TOTAL_POINTS) * 100), 100);
-            document.getElementById("progress-text").innerText = `${progressPercent}%`;
-            document.getElementById("progress-bar").style.width = `${progressPercent}%`;
+            // 计算进度百分比
+            let progressPercent = Math.min(Math.round((uniquePoints.length / TOTAL_POINTS) * 100), 100);
+            
+            // 更新进度条DOM
+            document.getElementById("progress-text").innerText = progressPercent + "%";
+            document.getElementById("progress-bar").style.width = progressPercent + "%";
 
+            // 更新今日足迹列表DOM
             const trackerList = document.getElementById("tracker-list");
             if (history.length === 0) {
-                trackerList.innerHTML = `<li class="no-data">暂无今日研习足迹，点击下方标签开始吧！</li>`;
+                trackerList.innerHTML = '<li class="no-data">暂无今日研习足迹，点击下方标签开始吧！</li>';
             } else {
                 trackerList.innerHTML = history.map(item => `
                     <li class="tracker-item">
-                        <span>✨ 已研习：<b>${item.name}</b></span>
+                        <span>${item.name}</span>
                         <span class="tracker-time">${item.time}</span>
                     </li>
                 `).join('');
             }
         }
+        
+        // 按【药性】筛选
+        function filterProperty(propValue, logName) {
+            saveTrack(logName); // 记录足迹
+            
+            const filterBar = document.getElementById("filterBar");
+            const filterDesc = document.getElementById("filterDesc");
+            
+            filterBar.style.display = "flex";
+            filterDesc.innerText = `当前正在筛选药性：【${propValue}】 的中药`;
 
-        // 中药筛选逻辑（已整合轨迹保存机制）
-        function filterProperty(propName, logName) {
-            if(window.event) window.event.stopPropagation();
             const cards = document.querySelectorAll('.herb-card');
             cards.forEach(card => {
-                if (card.getAttribute('data-properties').includes(propName)) {
-                    card.classList.remove('dimmed'); card.classList.add('highlighted');
+                const props = card.getAttribute('data-properties') || "";
+                if (props.includes(propValue)) {
+                    card.classList.remove('dimmed');
+                    card.classList.add('highlighted');
                 } else {
-                    card.classList.add('dimmed'); card.classList.remove('highlighted');
+                    card.classList.remove('highlighted');
+                    card.classList.add('dimmed');
                 }
             });
-            showFilterBar(`当前正在查看药性为【${propName}】的所有中药`);
-            if(logName) saveTrack(logName);
         }
 
-        function filterChannel(channelName, logName) {
-            if(window.event) window.event.stopPropagation();
+        // 按【归经】筛选
+        function filterChannel(channelValue, logName) {
+            saveTrack(logName); // 记录足迹
+            
+            const filterBar = document.getElementById("filterBar");
+            const filterDesc = document.getElementById("filterDesc");
+            
+            filterBar.style.display = "flex";
+            filterDesc.innerText = `当前正在筛选归经：【${channelValue}】 的中药`;
+
             const cards = document.querySelectorAll('.herb-card');
             cards.forEach(card => {
-                if (card.getAttribute('data-channels').includes(channelName)) {
-                    card.classList.remove('dimmed'); card.classList.add('highlighted');
+                const channels = card.getAttribute('data-channels') || "";
+                if (channels.includes(channelValue)) {
+                    card.classList.remove('dimmed');
+                    card.classList.add('highlighted');
                 } else {
-                    card.classList.add('dimmed'); card.classList.remove('highlighted');
+                    card.classList.remove('highlighted');
+                    card.classList.add('dimmed');
                 }
             });
-            showFilterBar(`当前正在查看归经属于【${channelName}】的所有中药`);
-            if(logName) saveTrack(logName);
         }
 
-        function showFilterBar(text) {
-            const bar = document.getElementById('filterBar');
-            document.getElementById('filterDesc').innerText = text;
-            bar.style.display = 'flex';
-        }
-
+        // 清除筛选状态，恢复全部可见
         function clearFilter() {
+            const filterBar = document.getElementById("filterBar");
+            if (filterBar) filterBar.style.display = "none";
+
             const cards = document.querySelectorAll('.herb-card');
-            cards.forEach(card => { card.classList.remove('dimmed'); card.classList.remove('highlighted'); });
-            if(document.getElementById('filterBar')) document.getElementById('filterBar').style.display = 'none';
+            cards.forEach(card => {
+                card.classList.remove('dimmed');
+                card.classList.remove('highlighted');
+            });
         }
+    </script>
+    <!-- ====== 🟢 粘贴到这里结束 ====== -->
     </script>
 </body>
 </html>
