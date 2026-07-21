@@ -692,7 +692,7 @@
                     <div class="info-card" id="herb-麻黄" data-properties="温" data-flavors="辛 苦" data-channels="肺经 膀胱经">
                         <details><summary><span>🌿 麻黄</span><span class="name-latin">(Mahuang)</span></summary>
                             <div class="card-content">
-                                <div class="info-row"><div class="info-label">药性与归经</div><div class="info-value"><span class="tag-property warm" onclick="filterProperty('温', '麻黄-温')">温</span> <span class="tag-flavor" onclick="filterFlavor('辛', '麻黄-辛')">辛</span> <span class="tag-flavor" onclick="filterFlavor('苦', '麻黄-苦')">微苦</span> ➔ <span class="tag-channel" onclick="filterChannel('肺经', '麻黄-肺经')">肺经</span> <span class="tag-channel" onclick="filterChannel('膀胱经', '麻黄-膀胱经', event)">膀胱经</span></div></div>
+                               <div class="info-row"><div class="info-label">药性与归经</div><div class="info-value"><span class="tag-property warm" onclick="filterProperty('温')">温</span> <span class="tag-flavor" onclick="filterProperty('辛')">辛</span> <span class="tag-flavor" onclick="filterProperty('苦')">微苦</span> → <span class="tag-channel" onclick="filterProperty('肺经')">肺经</span> <span class="tag-channel" onclick="filterProperty('膀胱经')">膀胱经</span></div></div>
                                 <div class="info-row"><div class="info-label">主要功效</div><div class="info-value" style="font-weight: bold; color: #c0392b;">发汗解表，宣肺平喘，利水消肿。</div></div>
                                 <div class="info-row"><div class="info-label">核心方剂串联</div><div class="info-value">外感风寒表实证要药（如 <a class="formula-link" onclick="openFormulaModal('麻黄汤')">麻黄汤</a>）；肺热咳喘（如 <a class="formula-link" onclick="openFormulaModal('麻黄杏仁甘草石膏汤')">麻杏石甘汤</a>）。</div></div>
                             </div>
@@ -2799,7 +2799,7 @@
             }
         }
     // 点击性味 / 归经标签时，触发全库扫描与弹窗展示
-// 升级版：精准匹配你库中所有以 id="herb-xxx" 开头的药材卡片
+// 智能匹配：支持 辛、苦、甘、酸、咸 / 肺经、膀胱经 等所有标签筛选
 function filterProperty(propName) {
     // 1. 设置弹窗标题
     const titleEl = document.getElementById('propertyModalTitle');
@@ -2807,18 +2807,18 @@ function filterProperty(propName) {
         titleEl.innerText = `性味 / 归经筛选：【${propName}】`;
     }
 
-    // 2. 自动抓取全库所有 id 以 "herb-" 开头的药材（如 id="herb-知母"）
+    // 2. 抓取全库所有以 id="herb-xxx" 开头的药材卡片
     const herbElements = document.querySelectorAll('[id^="herb-"]');
     const matchedHerbs = [];
 
     herbElements.forEach(card => {
-        // 从 id="herb-知母" 中提取中药名字 "知母"
+        // 提取药材名字（从 id="herb-麻黄" 中提取 "麻黄"）
         const herbName = card.id.replace('herb-', '').trim();
         
-        // 抓取卡片内的全部文本内容（包含寒、苦、甘、肺经、胃经、肾经等所有标签文本）
+        // 获取卡片内的全部文本内容
         const fullText = card.innerText || card.textContent;
-        
-        // 匹配是否包含点击的属性
+
+        // 智能判定：如果卡片文本包含点击的词（如“辛”、“肺经”等）
         if (fullText.includes(propName)) {
             matchedHerbs.push({
                 name: herbName,
@@ -2827,7 +2827,7 @@ function filterProperty(propName) {
         }
     });
 
-    // 3. 渲染到弹窗中，生成可点击查看详情的超链接按钮
+    // 3. 渲染结果到弹窗中
     const container = document.getElementById('propertyHerbList');
     if (container) {
         container.innerHTML = '';
@@ -2838,23 +2838,18 @@ function filterProperty(propName) {
             matchedHerbs.forEach(item => {
                 const chip = document.createElement('div');
                 chip.className = 'property-herb-chip';
-                // 链接显示样式：加 🌿 图标与提示
                 chip.innerHTML = `<span>🌿 <b>${item.name}</b></span> <small style="font-size:0.75rem; opacity:0.7; margin-left:4px;">(点击查看详情)</small>`;
 
-                // 点击超链接逻辑：
+                // 点击弹窗里的药材链接：关闭筛选窗 -> 展开卡片 -> 滚动定位 -> 弹出药材档案
                 chip.onclick = function() {
-                    // ① 关闭筛选弹窗
                     closePropertyModal();
                     
-                    // ② 如果卡片是折叠状态（details），自动展开它
                     if (item.element.tagName.toLowerCase() === 'details') {
                         item.element.open = true;
                     }
                     
-                    // ③ 平滑滚动定位到该药材在页面上的位置
                     item.element.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     
-                    // ④ 自动调用你原本写好的 openHerbModal 函数，弹出详细档案窗口
                     if (typeof openHerbModal === 'function') {
                         openHerbModal(item.name);
                     }
