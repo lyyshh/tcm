@@ -2799,25 +2799,27 @@
             }
         }
     // 点击性味 / 归经标签时，触发全库扫描与弹窗展示
+// 升级版：精准匹配你库中所有以 id="herb-xxx" 开头的药材卡片
 function filterProperty(propName) {
+    // 1. 设置弹窗标题
     const titleEl = document.getElementById('propertyModalTitle');
     if (titleEl) {
         titleEl.innerText = `性味 / 归经筛选：【${propName}】`;
     }
 
-    // 抓取全库所有卡片
-    const herbCards = document.querySelectorAll('.herb-card');
+    // 2. 自动抓取全库所有 id 以 "herb-" 开头的药材（如 id="herb-知母"）
+    const herbElements = document.querySelectorAll('[id^="herb-"]');
     const matchedHerbs = [];
 
-    herbCards.forEach(card => {
-        const nameEl = card.querySelector('.herb-name, h3');
-        const herbName = nameEl ? nameEl.innerText.trim() : '未知药材';
-
-        // 收集卡片里的所有标签文本
-        const tags = Array.from(card.querySelectorAll('.tag, .tag-property, .tag-channel'))
-                          .map(t => t.innerText.trim());
-
-        if (tags.includes(propName)) {
+    herbElements.forEach(card => {
+        // 从 id="herb-知母" 中提取中药名字 "知母"
+        const herbName = card.id.replace('herb-', '').trim();
+        
+        // 抓取卡片内的全部文本内容（包含寒、苦、甘、肺经、胃经、肾经等所有标签文本）
+        const fullText = card.innerText || card.textContent;
+        
+        // 匹配是否包含点击的属性
+        if (fullText.includes(propName)) {
             matchedHerbs.push({
                 name: herbName,
                 element: card
@@ -2825,27 +2827,37 @@ function filterProperty(propName) {
         }
     });
 
-    // 将匹配结果注入弹窗列表
+    // 3. 渲染到弹窗中，生成可点击查看详情的超链接按钮
     const container = document.getElementById('propertyHerbList');
     if (container) {
         container.innerHTML = '';
 
         if (matchedHerbs.length === 0) {
-            container.innerHTML = `<p style="color: #999; font-size: 0.9rem;">库中暂未找到包含“${propName}”的药材。</p>`;
+            container.innerHTML = `<p style="color: #999; font-size: 0.9rem; padding: 10px;">库中暂未找到包含“${propName}”的药材。</p>`;
         } else {
             matchedHerbs.forEach(item => {
                 const chip = document.createElement('div');
                 chip.className = 'property-herb-chip';
-                chip.innerText = item.name;
+                // 链接显示样式：加 🌿 图标与提示
+                chip.innerHTML = `<span>🌿 <b>${item.name}</b></span> <small style="font-size:0.75rem; opacity:0.7; margin-left:4px;">(点击查看详情)</small>`;
 
-                // 点击弹窗中的药材胶囊 -> 关弹窗 -> 滚动定位 -> 发光高亮
+                // 点击超链接逻辑：
                 chip.onclick = function() {
+                    // ① 关闭筛选弹窗
                     closePropertyModal();
+                    
+                    // ② 如果卡片是折叠状态（details），自动展开它
+                    if (item.element.tagName.toLowerCase() === 'details') {
+                        item.element.open = true;
+                    }
+                    
+                    // ③ 平滑滚动定位到该药材在页面上的位置
                     item.element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    item.element.classList.add('herb-card-highlight');
-                    setTimeout(() => {
-                        item.element.classList.remove('herb-card-highlight');
-                    }, 2000);
+                    
+                    // ④ 自动调用你原本写好的 openHerbModal 函数，弹出详细档案窗口
+                    if (typeof openHerbModal === 'function') {
+                        openHerbModal(item.name);
+                    }
                 };
 
                 container.appendChild(chip);
@@ -2853,7 +2865,7 @@ function filterProperty(propName) {
         }
     }
 
-    // 显示弹窗
+    // 4. 显示弹窗
     const modal = document.getElementById('propertyModal');
     if (modal) {
         modal.style.display = 'flex';
