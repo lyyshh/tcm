@@ -178,6 +178,113 @@
         }
         .tcm-modal-close:hover { background: #eaeaea; color: var(--danger-color); }
         .tcm-modal-body { padding: 20px; overflow-y: auto; font-size: 13.5px; color: var(--text-color); }
+    /* ================= 性味筛选弹窗专属样式 ================= */
+.property-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.property-modal-container {
+    background: #ffffff;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 480px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    animation: propModalIn 0.25s ease-out;
+}
+
+@keyframes propModalIn {
+    from { opacity: 0; transform: scale(0.95) translateY(-10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.property-modal-header {
+    padding: 16px 20px;
+    background: var(--primary-color, #2c5e3b);
+    color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.property-modal-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.property-modal-close {
+    font-size: 24px;
+    cursor: pointer;
+    line-height: 1;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.property-modal-close:hover {
+    opacity: 1;
+}
+
+.property-modal-body {
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.property-modal-tip {
+    margin-top: 0;
+    margin-bottom: 12px;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.property-herb-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.property-herb-chip {
+    padding: 8px 16px;
+    background: #f0f7f2;
+    border: 1px solid #c2e0cb;
+    border-radius: 20px;
+    color: var(--primary-color, #2c5e3b);
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.property-herb-chip:hover {
+    background: var(--primary-color, #2c5e3b);
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(44, 94, 59, 0.15);
+}
+
+/* 跳转卡片时的呼吸高亮动画 */
+.herb-card-highlight {
+    animation: highlightGlow 2s ease;
+}
+
+@keyframes highlightGlow {
+    0% { box-shadow: 0 0 0px var(--primary-color, #2c5e3b); }
+    30% { box-shadow: 0 0 18px var(--primary-color, #2c5e3b); transform: scale(1.02); }
+    100% { box-shadow: none; transform: scale(1); }
+}
     </style>
 
 </head>
@@ -2691,7 +2798,98 @@
                 openTcmModal('提示', `<p>暂无收录【${formulaName}】的详细方剂学档案。</p>`);
             }
         }
-    </script>
+    // 点击性味 / 归经标签时，触发全库扫描与弹窗展示
+function filterProperty(propName) {
+    const titleEl = document.getElementById('propertyModalTitle');
+    if (titleEl) {
+        titleEl.innerText = `性味 / 归经筛选：【${propName}】`;
+    }
 
+    // 抓取全库所有卡片
+    const herbCards = document.querySelectorAll('.herb-card');
+    const matchedHerbs = [];
+
+    herbCards.forEach(card => {
+        const nameEl = card.querySelector('.herb-name, h3');
+        const herbName = nameEl ? nameEl.innerText.trim() : '未知药材';
+
+        // 收集卡片里的所有标签文本
+        const tags = Array.from(card.querySelectorAll('.tag, .tag-property, .tag-channel'))
+                          .map(t => t.innerText.trim());
+
+        if (tags.includes(propName)) {
+            matchedHerbs.push({
+                name: herbName,
+                element: card
+            });
+        }
+    });
+
+    // 将匹配结果注入弹窗列表
+    const container = document.getElementById('propertyHerbList');
+    if (container) {
+        container.innerHTML = '';
+
+        if (matchedHerbs.length === 0) {
+            container.innerHTML = `<p style="color: #999; font-size: 0.9rem;">库中暂未找到包含“${propName}”的药材。</p>`;
+        } else {
+            matchedHerbs.forEach(item => {
+                const chip = document.createElement('div');
+                chip.className = 'property-herb-chip';
+                chip.innerText = item.name;
+
+                // 点击弹窗中的药材胶囊 -> 关弹窗 -> 滚动定位 -> 发光高亮
+                chip.onclick = function() {
+                    closePropertyModal();
+                    item.element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    item.element.classList.add('herb-card-highlight');
+                    setTimeout(() => {
+                        item.element.classList.remove('herb-card-highlight');
+                    }, 2000);
+                };
+
+                container.appendChild(chip);
+            });
+        }
+    }
+
+    // 显示弹窗
+    const modal = document.getElementById('propertyModal');
+    if (modal) {
+        modal.style.display = 'flex';
+    }
+}
+
+// 关闭弹窗函数
+function closePropertyModal() {
+    const modal = document.getElementById('propertyModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+// 点击弹窗背景（遮罩）自动关闭
+window.addEventListener('click', function(event) {
+    const modal = document.getElementById('propertyModal');
+    if (event.target === modal) {
+        closePropertyModal();
+    }
+});
+    </script>
+<!-- 性味 / 归经 专属筛选弹窗 -->
+<div id="propertyModal" class="property-modal-backdrop" style="display: none;">
+    <div class="property-modal-container">
+        <div class="property-modal-header">
+            <h3 id="propertyModalTitle">性味 / 归经筛选</h3>
+            <span class="property-modal-close" onclick="closePropertyModal()">&times;</span>
+        </div>
+        <div class="property-modal-body">
+            <p class="property-modal-tip">点击下方药材标签，可快速跳转定位至该药材：</p>
+            <div id="propertyHerbList" class="property-herb-grid">
+                <!-- 匹配到的药材胶囊会通过 JS 动态插入这里 -->
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
