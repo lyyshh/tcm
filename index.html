@@ -347,6 +347,116 @@
                 </div>
             </div>
     
+            <!-- ================= 总论 · 中药药性理论（四气 / 五味 / 升降浮沉 / 归经） ================= -->
+            <style>
+                .theory-module { background:#ffffff; border:1px solid var(--border-color); border-left:4px solid #27ae60; border-radius:8px; padding:18px 20px; margin-bottom:22px; box-shadow:0 4px 6px rgba(0,0,0,0.03); }
+                .theory-title { font-size:17px; font-weight:700; color:#1e6b3a; display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+                .theory-intro { font-size:12.5px; color:#5f6d7a; margin:0 0 14px 0; line-height:1.7; background:#f3faf5; border-radius:6px; padding:8px 12px; }
+                .theory-card { border:1px solid #e3efe7; border-radius:6px; margin-bottom:10px; background:#fcfffd; overflow:hidden; }
+                .theory-card > summary { padding:12px 16px; font-size:14px; font-weight:600; color:#217a45; cursor:pointer; background:#f0f8f3; display:flex; align-items:center; }
+                .theory-card > summary::-webkit-details-marker { display:none; }
+                .theory-card > summary::before { content:"▶"; font-size:10px; color:#27ae60; margin-right:8px; transition:transform .2s; }
+                .theory-card[open] > summary::before { transform:rotate(90deg); }
+                .theory-body { padding:14px 18px; font-size:13px; color:#34404a; line-height:1.9; }
+                .theory-body h4 { font-size:13.5px; color:#2c3e50; margin:16px 0 6px 0; padding:4px 8px; border-left:3px solid #27ae60; background:#f8f9fa; }
+                .theory-body h4:first-child { margin-top:0; }
+                .theory-body p { margin:6px 0; }
+                .theory-body .cite { color:#8a949c; font-style:italic; }
+                .prop-tag, .flavor-tag { display:inline-block; padding:1px 8px; margin:1px 2px; border-radius:3px; font-size:12px; font-weight:700; cursor:pointer; user-select:none; transition:all .15s; }
+                .prop-tag:hover, .flavor-tag:hover { transform:scale(1.06); box-shadow:0 1px 3px rgba(0,0,0,.12); }
+                .prop-tag.hot { background:#ffeaa7; color:#d35400; }
+                .prop-tag.cold { background:#dff9fb; color:#2e86de; }
+                .prop-tag.neutral { background:#f1f2f6; color:#747d8c; }
+                .flavor-tag { background:#f8e1cc; color:#ba5d00; }
+                .channel-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(240px, 1fr)); gap:10px; margin-top:10px; }
+                .channel-block { border:1px solid #e1f0e8; border-radius:6px; background:#ffffff; overflow:hidden; }
+                .channel-head { display:flex; justify-content:space-between; align-items:center; padding:7px 11px; background:linear-gradient(145deg,#eafaf1,#dff5e9); cursor:pointer; transition:background .2s; }
+                .channel-head:hover { background:linear-gradient(145deg,#d4f3e0,#c4edd5); }
+                .channel-name { font-weight:700; color:#1e7a45; font-size:13px; }
+                .channel-meridian { font-size:10.5px; color:#7f8c8d; font-weight:500; margin-left:5px; }
+                .channel-count { font-size:11px; color:#27ae60; background:#ffffff; border-radius:999px; padding:1px 8px; border:1px solid #cdead9; }
+                .channel-herbs { padding:9px 11px; display:flex; flex-wrap:wrap; gap:2px 6px; max-height:150px; overflow-y:auto; }
+                .channel-herbs .herb-link { font-size:12px; }
+            </style>
+            <div class="theory-module">
+                <div class="theory-title">🎓 总论 · 中药药性理论</div>
+                <p class="theory-intro">四气、五味、升降浮沉、归经是学习中药的<b>前提</b>与理论核心。💡 用法：点击文中<span class="prop-tag hot" style="cursor:default">性</span><span class="flavor-tag" style="cursor:default">味</span>标签或经络名，可在下方各论中高亮筛选出全部对应中药；点击<a class="herb-link" style="cursor:default">绿色药名</a>可直接弹出该药的完整档案（含归经与方剂串联）。</p>
+
+                <!-- 第一节 四气 -->
+                <details class="theory-card" open>
+                    <summary>第一节 · 四气（寒 热 温 凉）</summary>
+                    <div class="theory-body">
+                        <h4>基本概念</h4>
+                        <p>四气，就是 <span class="prop-tag cold" onclick="filterProperty('寒','总论四气-寒')">寒</span><span class="prop-tag cold" onclick="filterProperty('凉','总论四气-凉')">凉</span><span class="prop-tag hot" onclick="filterProperty('温','总论四气-温')">温</span><span class="prop-tag hot" onclick="filterProperty('热','总论四气-热')">热</span> 四种不同的药性，又称四性。它反映了药物对人体<b>阴阳盛衰、寒热变化的作用倾向</b>。寒凉属阴，温热属阳；寒与凉、温与热仅是程度上的不同，即"凉次于寒""温次于热"，故又有 <span class="prop-tag cold" onclick="filterProperty('大寒','总论四气-大寒')">大寒</span><span class="prop-tag cold" onclick="filterProperty('微寒','总论四气-微寒')">微寒</span> 等进一步区分。此外还有一类 <span class="prop-tag neutral" onclick="filterProperty('平','总论四气-平')">平</span> 性药，指寒热界限不明显、药性平和、作用缓和之药（如 <a class="herb-link" onclick="openHerbModal('党参')">党参</a>、<a class="herb-link" onclick="openHerbModal('山药')">山药</a>、<a class="herb-link" onclick="openHerbModal('甘草')">甘草</a>），但平性仍未超出四性范围，故仍称四气而不称五气。</p>
+                        <h4>药性如何确定 —— 以用药反应为依据，以病证寒热为基准</h4>
+                        <p>能够减轻或消除<b>热证</b>的药物，一般属于寒凉——如高热烦渴、面红目赤之阳热证，用 <a class="herb-link" onclick="openHerbModal('石膏')">石膏</a>、<a class="herb-link" onclick="openHerbModal('知母')">知母</a>、<a class="herb-link" onclick="openHerbModal('栀子')">栀子</a> 治之而解；能够减轻或消除<b>寒证</b>的药物，一般属于温热——如四肢厥冷、脘腹冷痛之阴寒证，用 <a class="herb-link" onclick="openHerbModal('附子')">附子</a>、<a class="herb-link" onclick="openHerbModal('肉桂')">肉桂</a>、<a class="herb-link" onclick="openHerbModal('干姜')">干姜</a> 治之而愈。</p>
+                        <h4>作用与主治</h4>
+                        <p><b>寒凉药</b>：清热泻火、凉血解毒、滋阴除蒸、泻热通便、清热利尿、清化热痰、清心开窍、凉肝息风，主治实热烦渴、温毒发斑、火毒疮疡、热结便秘、高热神昏等<b>阳热证</b>。<br><b>温热药</b>：温里散寒、暖肝散结、补火助阳、温阳利水、温经通络、引火归元、回阳救逆，主治中寒腹痛、寒疝作痛、阳痿宫冷、风寒痹证、亡阳虚脱等<b>阴寒证</b>。</p>
+                        <h4>用药原则</h4>
+                        <p><span class="cite">《素问·至真要大论》："寒者热之，热者寒之。"《神农本草经》："疗寒以热药，疗热以寒药。"</span> 寒凉药治阳热证，温热药治阴寒证，反之则病情恶化，故王叔和云："桂枝下咽，阳盛则毙；承气入胃，阴盛以亡。"寒热错杂之证，则当寒热并用。</p>
+                        <h4>气与味必须结合看</h4>
+                        <p>同为温性，因五味不同而功异：<a class="herb-link" onclick="openHerbModal('麻黄')">麻黄</a> 辛温散寒解表、<a class="herb-link" onclick="openHerbModal('苦杏仁')">苦杏仁</a> 苦温下气止咳、<a class="herb-link" onclick="openHerbModal('大枣')">大枣</a> 甘温补脾益气、<a class="herb-link" onclick="openHerbModal('乌梅')">乌梅</a> 酸温敛肺涩肠、<a class="herb-link" onclick="openHerbModal('肉苁蓉')">肉苁蓉</a> 咸温补肾助阳；同为辛味，因四气不同而效殊：<a class="herb-link" onclick="openHerbModal('桂枝')">桂枝</a> 辛温解表散寒、<a class="herb-link" onclick="openHerbModal('薄荷')">薄荷</a> 辛凉疏散风热、<a class="herb-link" onclick="openHerbModal('附子')">附子</a> 辛热补火助阳、<a class="herb-link" onclick="openHerbModal('石膏')">石膏</a> 辛寒清热泻火。</p>
+                    </div>
+                </details>
+
+                <!-- 第二节 五味 -->
+                <details class="theory-card">
+                    <summary>第二节 · 五味（辛 甘 酸 苦 咸 · 附淡涩）</summary>
+                    <div class="theory-body">
+                        <h4>基本概念</h4>
+                        <p>五味，指药物有 <span class="flavor-tag" onclick="filterFlavor('辛','总论五味-辛')">辛</span><span class="flavor-tag" onclick="filterFlavor('甘','总论五味-甘')">甘</span><span class="flavor-tag" onclick="filterFlavor('酸','总论五味-酸')">酸</span><span class="flavor-tag" onclick="filterFlavor('苦','总论五味-苦')">苦</span><span class="flavor-tag" onclick="filterFlavor('咸','总论五味-咸')">咸</span> 五种不同药味，另有 <span class="flavor-tag" onclick="filterFlavor('淡','总论五味-淡')">淡</span><span class="flavor-tag" onclick="filterFlavor('涩','总论五味-涩')">涩</span>，实不止五种。五味既是药物真实滋味的反映，更是<b>对药物作用的高度概括</b>。辛甘淡属阳，酸苦咸涩属阴。<span class="cite">《素问·脏气法时论》："辛散，酸收，甘缓，苦坚，咸软。"</span></p>
+                        <h4>辛 ——"能散能行"</h4>
+                        <p>发散、行气、行血。解表药、行气药、活血药多辛，治表证及气血阻滞。如 <a class="herb-link" onclick="openHerbModal('紫苏叶')">紫苏叶</a> 发散风寒、<a class="herb-link" onclick="openHerbModal('木香')">木香</a> 行气止痛、<a class="herb-link" onclick="openHerbModal('川芎')">川芎</a> 活血化瘀。</p>
+                        <h4>甘 ——"能补能和能缓"</h4>
+                        <p>补益、和中、调和药性、缓急止痛，并能解药食中毒。如 <a class="herb-link" onclick="openHerbModal('人参')">人参</a> 大补元气、<a class="herb-link" onclick="openHerbModal('熟地黄')">熟地黄</a> 滋补精血、<a class="herb-link" onclick="openHerbModal('六神曲')">六神曲</a> 消食和胃、饴糖缓急止痛、<a class="herb-link" onclick="openHerbModal('甘草')">甘草</a> 调和药性并解毒。</p>
+                        <h4>酸 ——"能收能涩"</h4>
+                        <p>收敛、固涩，治自汗盗汗、久咳久泻、遗精滑精、崩带不止等滑脱不禁之证。如 <a class="herb-link" onclick="openHerbModal('五味子')">五味子</a> 固表止汗、<a class="herb-link" onclick="openHerbModal('乌梅')">乌梅</a> 敛肺止咳、<a class="herb-link" onclick="openHerbModal('五倍子')">五倍子</a> 涩肠止泻、<a class="herb-link" onclick="openHerbModal('山茱萸')">山茱萸</a> 涩精止遗、<a class="herb-link" onclick="openHerbModal('金樱子')">金樱子</a> 固精缩尿止带。部分酸味药兼能生津（<a class="herb-link" onclick="openHerbModal('乌梅')">乌梅</a>、<a class="herb-link" onclick="openHerbModal('酸枣仁')">酸枣仁</a>）。"酸入肝"，故醋制可引药入肝（如醋制 <a class="herb-link" onclick="openHerbModal('香附')">香附</a>、<a class="herb-link" onclick="openHerbModal('柴胡')">柴胡</a> 增强疏肝解郁）。</p>
+                        <h4>苦 ——"能泄、能燥、能坚"</h4>
+                        <p>清泄火热、泄降气逆、通泄大便、燥湿、坚阴（泻火存阴）。如 <a class="herb-link" onclick="openHerbModal('黄芩')">黄芩</a>、<a class="herb-link" onclick="openHerbModal('栀子')">栀子</a> 清热泻火；<a class="herb-link" onclick="openHerbModal('苦杏仁')">苦杏仁</a>、<a class="herb-link" onclick="openHerbModal('葶苈子')">葶苈子</a> 降气平喘；<a class="herb-link" onclick="openHerbModal('半夏')">半夏</a>、<a class="herb-link" onclick="openHerbModal('陈皮')">陈皮</a> 降逆止呕；<a class="herb-link" onclick="openHerbModal('大黄')">大黄</a>、<a class="herb-link" onclick="openHerbModal('芒硝')">芒硝</a> 泻热通便；<a class="herb-link" onclick="openHerbModal('龙胆草')">龙胆草</a>、<a class="herb-link" onclick="openHerbModal('黄连')">黄连</a> 清热燥湿；<a class="herb-link" onclick="openHerbModal('苍术')">苍术</a>、<a class="herb-link" onclick="openHerbModal('厚朴')">厚朴</a> 苦温燥湿；<a class="herb-link" onclick="openHerbModal('知母')">知母</a>、<a class="herb-link" onclick="openHerbModal('黄柏')">黄柏</a> 泻火存阴。</p>
+                        <h4>咸 ——"能下、能软"</h4>
+                        <p>泻下通便、软坚散结，治大便燥结、痰核瘿瘤、癥瘕痞块。如 <a class="herb-link" onclick="openHerbModal('芒硝')">芒硝</a> 泻热通便，<a class="herb-link" onclick="openHerbModal('海藻')">海藻</a>、<a class="herb-link" onclick="openHerbModal('牡蛎')">牡蛎</a> 消散瘿瘤，<a class="herb-link" onclick="openHerbModal('鳖甲')">鳖甲</a> 软坚消癥。"咸先入肾"，故 <a class="herb-link" onclick="openHerbModal('紫河车')">紫河车</a>、<a class="herb-link" onclick="openHerbModal('蛤蚧')">蛤蚧</a>、<a class="herb-link" onclick="openHerbModal('龟甲')">龟甲</a> 等咸味药多有良好补肾作用；<a class="herb-link" onclick="openHerbModal('知母')">知母</a>、<a class="herb-link" onclick="openHerbModal('黄柏')">黄柏</a>、<a class="herb-link" onclick="openHerbModal('杜仲')">杜仲</a> 等盐水炮制即为引药入肾。</p>
+                        <h4>淡 ——"能渗、能利"</h4>
+                        <p>利水渗湿，治水肿、小便不利。如 <a class="herb-link" onclick="openHerbModal('薏苡仁')">薏苡仁</a>、<a class="herb-link" onclick="openHerbModal('通草')">通草</a>、<a class="herb-link" onclick="openHerbModal('灯心草')">灯心草</a>、<a class="herb-link" onclick="openHerbModal('茯苓')">茯苓</a>、<a class="herb-link" onclick="openHerbModal('猪苓')">猪苓</a>、<a class="herb-link" onclick="openHerbModal('泽泻')">泽泻</a>。前人主张"淡附于甘"，故只言五味。</p>
+                        <h4>涩 —— 与酸类似</h4>
+                        <p>收敛固涩。如 <a class="herb-link" onclick="openHerbModal('莲子')">莲子</a> 固精止带、<a class="herb-link" onclick="openHerbModal('赤石脂')">赤石脂</a> 涩肠止泻、<a class="herb-link" onclick="openHerbModal('海螵蛸')">海螵蛸</a> 收敛止血。</p>
+                        <h4>五味入五脏</h4>
+                        <p><span class="cite">《素问·宣明五气篇》："酸入肝、辛入肺、苦入心、咸入肾、甘入脾。"</span> 此为一般规律而非一成不变——如 <a class="herb-link" onclick="openHerbModal('黄柏')">黄柏</a> 味苦却泻肾火而非心火，<a class="herb-link" onclick="openHerbModal('枸杞子')">枸杞子</a> 味甘却补肝肾而非补脾。</p>
+                    </div>
+                </details>
+
+                <!-- 第三节 升降浮沉 -->
+                <details class="theory-card">
+                    <summary>第三节 · 升降浮沉</summary>
+                    <div class="theory-body">
+                        <h4>基本概念</h4>
+                        <p>升降浮沉表示药物对人体作用的<b>不同趋向性</b>：<b>升</b>（上升提举，趋向于上）、<b>降</b>（下达降逆，趋向于下）、<b>浮</b>（向外发散，趋向于外）、<b>沉</b>（向内收敛，趋向于内）。升浮属阳，沉降属阴。它与疾病的病势（向上如呕吐喘息、向下如脱肛崩漏、向外如自汗盗汗、向内如表邪入里）和病位（在表在里、在上在下）相对而言。</p>
+                        <h4>影响因素</h4>
+                        <p>① <b>与四气五味有关</b>：辛甘温热者多升浮，如 <a class="herb-link" onclick="openHerbModal('麻黄')">麻黄</a>、<a class="herb-link" onclick="openHerbModal('升麻')">升麻</a>、<a class="herb-link" onclick="openHerbModal('黄芪')">黄芪</a>；酸苦咸寒凉者多沉降，如 <a class="herb-link" onclick="openHerbModal('大黄')">大黄</a>、<a class="herb-link" onclick="openHerbModal('芒硝')">芒硝</a>。<br>② <b>与质地轻重有关</b>："轻清升浮为阳，重浊沉降为阴"。花、叶、皮、枝质轻多升浮，如 <a class="herb-link" onclick="openHerbModal('紫苏叶')">苏叶</a>、<a class="herb-link" onclick="openHerbModal('菊花')">菊花</a>、<a class="herb-link" onclick="openHerbModal('蝉蜕')">蝉蜕</a>；种子、果实、矿物、贝壳质重多沉降，如 <a class="herb-link" onclick="openHerbModal('紫苏子')">苏子</a>、<a class="herb-link" onclick="openHerbModal('枳实')">枳实</a>、<a class="herb-link" onclick="openHerbModal('牡蛎')">牡蛎</a>、<a class="herb-link" onclick="openHerbModal('代赭石')">代赭石</a>。<b>特殊</b>："诸花皆升，旋覆独降；诸子皆降，苍耳独升"（<a class="herb-link" onclick="openHerbModal('旋覆花')">旋覆花</a> 降气消痰而沉降，<a class="herb-link" onclick="openHerbModal('苍耳子')">苍耳子</a> 通窍发汗而升浮）；<a class="herb-link" onclick="openHerbModal('川芎')">川芎</a> 上行头目、下行血海，具双向性。<br>③ <b>受炮制影响</b>：酒制则升、姜炒则散、醋炒收敛、盐炒下行——如 <a class="herb-link" onclick="openHerbModal('大黄')">大黄</a> 本沉降，酒炒后可清上焦火热、治目赤头痛。<br>④ <b>受配伍影响</b>：少量升浮药入大队沉降药可随之下降，反之亦然。如 <a class="herb-link" onclick="openHerbModal('牛膝')">牛膝</a> 引血下行本沉降，与 <a class="herb-link" onclick="openHerbModal('桃仁')">桃仁</a>、<a class="herb-link" onclick="openHerbModal('红花')">红花</a> 及 <a class="herb-link" onclick="openHerbModal('桔梗')">桔梗</a>、<a class="herb-link" onclick="openHerbModal('柴胡')">柴胡</a>、枳壳 等同用亦可随之上升。故李时珍曰："升降在物亦在人也。"</p>
+                        <h4>药性归纳</h4>
+                        <p><b>升浮药</b>：性主温热，味属辛甘淡，质多轻清，主上升向外——疏散解表、宣毒透疹、宣肺止咳、温里散寒、行气开郁、开窍醒神、升阳举陷、涌吐等。<br><b>沉降药</b>：性主寒凉，味属酸苦咸，质多重浊，主下行向内——清热泻火、泻下通便、利水渗湿、重镇安神、平肝潜阳、息风止痉、降逆平喘、收敛固涩等。</p>
+                        <h4>用药原则 ——"顺着病位，逆着病势"</h4>
+                        <p>病位在上在表宜升浮：外感风热选 <a class="herb-link" onclick="openHerbModal('薄荷')">薄荷</a>、<a class="herb-link" onclick="openHerbModal('菊花')">菊花</a> 疏散；病位在下在里宜沉降：热结便秘选 <a class="herb-link" onclick="openHerbModal('大黄')">大黄</a>、<a class="herb-link" onclick="openHerbModal('芒硝')">芒硝</a> 泻下。病势上逆宜降：肝阳上亢选 <a class="herb-link" onclick="openHerbModal('代赭石')">代赭石</a>、<a class="herb-link" onclick="openHerbModal('石决明')">石决明</a> 潜阳；病势下陷宜升：久泻脱肛选 <a class="herb-link" onclick="openHerbModal('黄芪')">黄芪</a>、<a class="herb-link" onclick="openHerbModal('升麻')">升麻</a>、<a class="herb-link" onclick="openHerbModal('柴胡')">柴胡</a> 举陷。复杂病机可升降并用：如 <a class="herb-link" onclick="openHerbModal('石膏')">石膏</a> 清泄肺火配 <a class="herb-link" onclick="openHerbModal('麻黄')">麻黄</a> 解表宣肺，一清一宣（麻杏石甘汤意）；<a class="herb-link" onclick="openHerbModal('黄连')">黄连</a> 清心降火配 <a class="herb-link" onclick="openHerbModal('肉桂')">肉桂</a> 引火归元，交通心肾。</p>
+                    </div>
+                </details>
+
+                <!-- 第四节 归经 -->
+                <details class="theory-card" open>
+                    <summary>第四节 · 归经（药物作用的定位概念）</summary>
+                    <div class="theory-body">
+                        <h4>基本概念</h4>
+                        <p>归经是<b>药物作用的定位概念</b>。归是作用的归属，经是脏腑经络的概称。归经指药物对机体某部分的<b>选择性作用</b>——某药对某些脏腑经络有特殊亲和作用，对这些部位的病变起主要或特殊的治疗作用。一药归数经，说明其治疗范围扩大：如 <a class="herb-link" onclick="openHerbModal('麻黄')">麻黄</a> 归肺与膀胱经，既能发汗宣肺平喘治外感咳喘，又能宣肺利尿治风水水肿。</p>
+                        <h4>归经如何确定 —— 以脏腑经络学说为基础，以所治病证为依据</h4>
+                        <p>心经病变多见心悸失眠，用 <a class="herb-link" onclick="openHerbModal('朱砂')">朱砂</a>、<a class="herb-link" onclick="openHerbModal('远志')">远志</a> 能治愈，说明其归<b>心经</b>；肺经病变常见胸闷喘咳，用 <a class="herb-link" onclick="openHerbModal('桔梗')">桔梗</a>、<a class="herb-link" onclick="openHerbModal('紫苏子')">苏子</a> 能治愈，说明其归<b>肺经</b>；肝经病变每见胁痛抽搐，用 <a class="herb-link" onclick="openHerbModal('白芍')">白芍</a>、<a class="herb-link" onclick="openHerbModal('钩藤')">钩藤</a> 能治愈，说明其归<b>肝经</b>。</p>
+                        <h4>掌握归经的意义</h4>
+                        <p>① <b>便于辨证选药</b>：同为热证，肺热咳喘用 <a class="herb-link" onclick="openHerbModal('桑白皮')">桑白皮</a>、<a class="herb-link" onclick="openHerbModal('地骨皮')">地骨皮</a>；胃火牙痛用 <a class="herb-link" onclick="openHerbModal('石膏')">石膏</a>、<a class="herb-link" onclick="openHerbModal('黄连')">黄连</a>；心火亢盛用 <a class="herb-link" onclick="openHerbModal('朱砂')">朱砂</a>、<a class="herb-link" onclick="openHerbModal('丹参')">丹参</a>；肝热目赤用 <a class="herb-link" onclick="openHerbModal('龙胆草')">龙胆草</a>。<br>② <b>区别功效相似之药</b>：同是利水，有 <a class="herb-link" onclick="openHerbModal('麻黄')">麻黄</a> 宣肺利水、<a class="herb-link" onclick="openHerbModal('黄芪')">黄芪</a> 健脾利水、<a class="herb-link" onclick="openHerbModal('附子')">附子</a> 温阳利水、<a class="herb-link" onclick="openHerbModal('猪苓')">猪苓</a> 通利膀胱之别；同治头痛，<a class="herb-link" onclick="openHerbModal('羌活')">羌活</a> 善治太阳经、<a class="herb-link" onclick="openHerbModal('葛根')">葛根</a> 善治阳明经、<a class="herb-link" onclick="openHerbModal('柴胡')">柴胡</a> 善治少阳经、<a class="herb-link" onclick="openHerbModal('吴茱萸')">吴茱萸</a> 善治厥阴经、<a class="herb-link" onclick="openHerbModal('细辛')">细辛</a> 善治少阴经。<br>③ <b>必须与四气五味、升降浮沉结合</b>：同归肺经，<a class="herb-link" onclick="openHerbModal('紫苏叶')">紫苏</a> 温散肺经风寒、<a class="herb-link" onclick="openHerbModal('薄荷')">薄荷</a> 凉散肺经风热、<a class="herb-link" onclick="openHerbModal('干姜')">干姜</a> 性热温肺化饮、<a class="herb-link" onclick="openHerbModal('黄芩')">黄芩</a> 性寒清肺泻火；<a class="herb-link" onclick="openHerbModal('桔梗')">桔梗</a>、<a class="herb-link" onclick="openHerbModal('麻黄')">麻黄</a> 药性升浮而开宣肺气，<a class="herb-link" onclick="openHerbModal('苦杏仁')">杏仁</a>、<a class="herb-link" onclick="openHerbModal('紫苏子')">苏子</a> 药性沉降而泻肺平喘。</p>
+                        <h4>附：引经报使</h4>
+                        <p>引经药能引导其他药物的药力直达病变部位，"兵无向导则不达贼境，药无引使则不通病所"。十二经引经药举例：肺经 <a class="herb-link" onclick="openHerbModal('桔梗')">桔梗</a>、<a class="herb-link" onclick="openHerbModal('升麻')">升麻</a>、<a class="herb-link" onclick="openHerbModal('葱白')">葱白</a>、<a class="herb-link" onclick="openHerbModal('辛夷')">辛夷</a>；大肠经 <a class="herb-link" onclick="openHerbModal('白芷')">白芷</a>、<a class="herb-link" onclick="openHerbModal('石膏')">石膏</a>；脾经 <a class="herb-link" onclick="openHerbModal('升麻')">升麻</a>、<a class="herb-link" onclick="openHerbModal('苍术')">苍术</a>；胃经 <a class="herb-link" onclick="openHerbModal('白芷')">白芷</a>、<a class="herb-link" onclick="openHerbModal('石膏')">石膏</a>、<a class="herb-link" onclick="openHerbModal('葛根')">葛根</a>；心经 <a class="herb-link" onclick="openHerbModal('细辛')">细辛</a>、<a class="herb-link" onclick="openHerbModal('黄连')">黄连</a>；小肠经 <a class="herb-link" onclick="openHerbModal('木通')">木通</a>、竹叶；肾经 <a class="herb-link" onclick="openHerbModal('肉桂')">肉桂</a>、<a class="herb-link" onclick="openHerbModal('细辛')">细辛</a>；膀胱经 <a class="herb-link" onclick="openHerbModal('羌活')">羌活</a>；心包经 <a class="herb-link" onclick="openHerbModal('柴胡')">柴胡</a>、<a class="herb-link" onclick="openHerbModal('牡丹皮')">丹皮</a>；三焦经 <a class="herb-link" onclick="openHerbModal('连翘')">连翘</a>、<a class="herb-link" onclick="openHerbModal('柴胡')">柴胡</a>；肝经 <a class="herb-link" onclick="openHerbModal('柴胡')">柴胡</a>、<a class="herb-link" onclick="openHerbModal('川芎')">川芎</a>、<a class="herb-link" onclick="openHerbModal('青皮')">青皮</a>、<a class="herb-link" onclick="openHerbModal('吴茱萸')">吴茱萸</a>；胆经 <a class="herb-link" onclick="openHerbModal('柴胡')">柴胡</a>、<a class="herb-link" onclick="openHerbModal('青皮')">青皮</a>。</p>
+                        <h4>🔗 十二经归经药物总索引（自动生成 · 点经名高亮各论 · 点药名看档案）</h4>
+                        <div id="channel-index" class="channel-grid"><!-- 由 buildChannelIndex() 自动生成 --></div>
+                    </div>
+                </details>
+            </div>
+
             <div class="filter-bar" id="filterBar">
                 <span id="filterDesc">正在筛选分类...</span>
                 <button class="clear-btn" onclick="clearFilter()">清除筛选</button>
@@ -4737,6 +4847,56 @@ function closePropertyModal() {
     const modal = document.getElementById('propertyModal');
     if (modal) modal.style.display = 'none';
 }
+
+// ============ 总论·归经：按十二经动态生成本库全部归经药物索引 ============
+function buildChannelIndex() {
+    const grid = document.getElementById('channel-index');
+    if (!grid) return;
+    const order = ['肺经','大肠经','胃经','脾经','心经','小肠经','膀胱经','肾经','心包经','三焦经','胆经','肝经'];
+    const meridian = {
+        肺经:'手太阴', 大肠经:'手阳明', 胃经:'足阳明', 脾经:'足太阴',
+        心经:'手少阴', 小肠经:'手太阳', 膀胱经:'足太阳', 肾经:'足少阴',
+        心包经:'手厥阴', 三焦经:'手少阳', 胆经:'足少阳', 肝经:'足厥阴'
+    };
+    const buckets = {};
+    order.forEach(c => buckets[c] = []);
+    document.querySelectorAll('#tcm-herb .info-card[id^="herb-"]').forEach(card => {
+        const name = card.id.replace('herb-', '');
+        (card.getAttribute('data-channels') || '').split(/\s+/).filter(Boolean).forEach(c => {
+            if (buckets[c]) buckets[c].push(name);
+        });
+    });
+    grid.innerHTML = '';
+    order.forEach(c => {
+        const herbs = buckets[c];
+        const block = document.createElement('div');
+        block.className = 'channel-block';
+
+        const head = document.createElement('div');
+        head.className = 'channel-head';
+        head.title = '点击在下方各论中高亮全部归「' + c + '」的中药';
+        head.innerHTML = `<span><span class="channel-name">${c}</span><span class="channel-meridian">${meridian[c] || ''}</span></span><span class="channel-count">${herbs.length} 味</span>`;
+        head.onclick = () => filterChannel(c, '总论归经-' + c);
+
+        const list = document.createElement('div');
+        list.className = 'channel-herbs';
+        if (!herbs.length) {
+            list.innerHTML = '<span style="color:#bbb;">—</span>';
+        } else {
+            herbs.forEach(h => {
+                const a = document.createElement('a');
+                a.className = 'herb-link';
+                a.textContent = h;
+                a.onclick = (e) => { e.stopPropagation(); openHerbModal(h); };
+                list.appendChild(a);
+            });
+        }
+        block.appendChild(head);
+        block.appendChild(list);
+        grid.appendChild(block);
+    });
+}
+document.addEventListener('DOMContentLoaded', buildChannelIndex);
     </script>
 <!-- 性味 / 归经 专属筛选弹窗 -->
 <div id="propertyModal" class="property-modal-backdrop" style="display: none;">
