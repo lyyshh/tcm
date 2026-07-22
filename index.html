@@ -181,38 +181,34 @@
     /* ================= 性味筛选弹窗专属样式 ================= */
 .property-modal-backdrop {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.45);
-    backdrop-filter: blur(4px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    right: 16px;
+    bottom: 16px;
     z-index: 2000;
+    pointer-events: none; /* 浮窗外区域不拦截点击，可继续点击页面标签叠加条件 */
 }
 
 .property-modal-container {
     background: #ffffff;
     border-radius: 12px;
-    width: 90%;
-    max-width: 480px;
-    max-height: 80vh;
+    width: 330px;
+    max-width: 88vw;
+    max-height: 46vh;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
+    border: 1px solid #c2e0cb;
     overflow: hidden;
     animation: propModalIn 0.25s ease-out;
+    pointer-events: auto; /* 浮窗本身可交互 */
 }
 
 @keyframes propModalIn {
-    from { opacity: 0; transform: scale(0.95) translateY(-10px); }
+    from { opacity: 0; transform: scale(0.95) translateY(10px); }
     to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
 .property-modal-header {
-    padding: 16px 20px;
+    padding: 8px 14px;
     background: var(--primary-color, #2c5e3b);
     color: #ffffff;
     display: flex;
@@ -222,12 +218,12 @@
 
 .property-modal-header h3 {
     margin: 0;
-    font-size: 1.1rem;
+    font-size: 0.92rem;
     font-weight: 600;
 }
 
 .property-modal-close {
-    font-size: 24px;
+    font-size: 20px;
     cursor: pointer;
     line-height: 1;
     opacity: 0.8;
@@ -239,30 +235,53 @@
 }
 
 .property-modal-body {
-    padding: 20px;
+    padding: 12px 14px;
     overflow-y: auto;
 }
 
 .property-modal-tip {
     margin-top: 0;
-    margin-bottom: 12px;
-    font-size: 0.85rem;
-    color: #666;
+    margin-bottom: 8px;
+    font-size: 0.75rem;
+    color: #888;
+    line-height: 1.5;
+}
+
+.active-filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.active-filter-tag {
+    padding: 3px 10px;
+    background: var(--primary-color, #2c5e3b);
+    color: #ffffff;
+    border-radius: 14px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s;
+}
+
+.active-filter-tag:hover {
+    background: #c0392b;
 }
 
 .property-herb-grid {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 6px;
 }
 
 .property-herb-chip {
-    padding: 8px 16px;
+    padding: 4px 11px;
     background: #f0f7f2;
     border: 1px solid #c2e0cb;
-    border-radius: 20px;
+    border-radius: 14px;
     color: var(--primary-color, #2c5e3b);
-    font-size: 0.95rem;
+    font-size: 0.83rem;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -999,7 +1018,7 @@
                     <div class="info-card" id="herb-麻黄" data-properties="温" data-flavors="辛 苦" data-channels="肺经 膀胱经">
                         <details><summary><span>🌿 麻黄</span><span class="name-latin">(Mahuang)</span></summary>
                             <div class="card-content">
-                               <div class="info-row"><div class="info-label">药性与归经</div><div class="info-value"><span class="tag-property warm" onclick="filterProperty('温')">温</span> <span class="tag-flavor" onclick="filterProperty('辛')">辛</span> <span class="tag-flavor" onclick="filterProperty('苦')">微苦</span> → <span class="tag-channel" onclick="filterProperty('肺经')">肺经</span> <span class="tag-channel" onclick="filterProperty('膀胱经')">膀胱经</span></div></div>
+                               <div class="info-row"><div class="info-label">药性与归经</div><div class="info-value"><span class="tag-property warm" onclick="filterProperty('温', '麻黄-温')">温</span> <span class="tag-flavor" onclick="filterFlavor('辛', '麻黄-辛')">辛</span> <span class="tag-flavor" onclick="filterFlavor('苦', '麻黄-苦')">微苦</span> ➔ <span class="tag-channel" onclick="filterChannel('肺经', '麻黄-肺经')">肺经</span> <span class="tag-channel" onclick="filterChannel('膀胱经', '麻黄-膀胱经', event)">膀胱经</span></div></div>
                                 <div class="info-row"><div class="info-label">主要功效</div><div class="info-value" style="font-weight: bold; color: #c0392b;">发汗解表，宣肺平喘，利水消肿。</div></div>
                                 <div class="info-row"><div class="info-label">核心方剂串联</div><div class="info-value">外感风寒表实证要药（如 <a class="formula-link" onclick="openFormulaModal('麻黄汤')">麻黄汤</a>）；肺热咳喘（如 <a class="formula-link" onclick="openFormulaModal('麻黄杏仁甘草石膏汤')">麻杏石甘汤</a>）。</div></div>
                             </div>
@@ -4540,69 +4559,63 @@
             });
         }
     
-        function filterProperty(prop, key) {
-            studiedSet.add(key);
-            updateProgress();
-            addTracker(`研习药性: [${prop}]`);
-            
-            document.querySelectorAll('#tcm-herb .info-card').forEach(card => {
-                const props = card.getAttribute('data-properties');
-                if (props && props.includes(prop)) {
-                    card.classList.remove('dimmed');
-                } else {
-                    card.classList.add('dimmed');
-                }
-            });
-            showFilterBar(`当前筛选药性: ${prop}`);
+        // ============ 统一多选筛选（药性 / 药味 / 归经 可任意叠加） ============
+        // 三类条件各自维护一个数组，药物须同时满足所有已选条件（AND 逻辑）
+        let activeFilters = { properties: [], flavors: [], channels: [] };
+
+        function toggleFilter(type, value, key, event) {
+            if (event) event.stopPropagation();
+            if (key) { studiedSet.add(key); updateProgress(); }
+            const arr = activeFilters[type];
+            const idx = arr.indexOf(value);
+            if (idx === -1) { arr.push(value); addTracker(`加入筛选: [${value}]`); }
+            else { arr.splice(idx, 1); addTracker(`移除筛选: [${value}]`); }
+            applyFilters();
+            renderFilterModal();
         }
-    
-        function filterFlavor(flavor, key) {
-            studiedSet.add(key);
-            updateProgress();
-            addTracker(`研习药味: [${flavor}]`);
-    
-            document.querySelectorAll('#tcm-herb .info-card').forEach(card => {
-                const flavors = card.getAttribute('data-flavors');
-                if (flavors && flavors.includes(flavor)) {
-                    card.classList.remove('dimmed');
-                } else {
-                    card.classList.add('dimmed');
-                }
-            });
-            showFilterBar(`当前筛选药味: ${flavor}`);
+
+        // 保留原有三个入口名称，卡片上的 onclick 无需改动
+        function filterProperty(value, key) { toggleFilter('properties', value, key); }
+        function filterFlavor(value, key)   { toggleFilter('flavors', value, key); }
+        function filterChannel(value, key, event) { toggleFilter('channels', value, key, event); }
+
+        function cardMatches(card) {
+            const props = (card.getAttribute('data-properties') || '').split(/\s+/).filter(Boolean);
+            const flavs = (card.getAttribute('data-flavors') || '').split(/\s+/).filter(Boolean);
+            const chans = (card.getAttribute('data-channels') || '').split(/\s+/).filter(Boolean);
+            return activeFilters.properties.every(v => props.includes(v))
+                && activeFilters.flavors.every(v => flavs.includes(v))
+                && activeFilters.channels.every(v => chans.includes(v));
         }
-    
-        // 修改后的经络点击统计：点击归经标签时，自动统计全部归该经络的药物
-        function filterChannel(channel, key, event) {
-            if (event) {
-                event.stopPropagation(); // 阻止事件冒泡折叠卡片
-            }
-            studiedSet.add(key);
-            updateProgress();
-            addTracker(`统计归经: [${channel}]`);
-    
-            document.querySelectorAll('#tcm-herb .info-card').forEach(card => {
-                const channels = card.getAttribute('data-channels');
-                if (channels && channels.includes(channel)) {
-                    card.classList.remove('dimmed');
-                } else {
-                    card.classList.add('dimmed');
-                }
-            });
-            showFilterBar(`归经自动统计: 全部【${channel}】药物`);
+
+        function filterActiveCount() {
+            return activeFilters.properties.length + activeFilters.flavors.length + activeFilters.channels.length;
         }
-    
+
+        function applyFilters() {
+            const anyActive = filterActiveCount() > 0;
+            document.querySelectorAll('#tcm-herb .info-card').forEach(card => {
+                if (!anyActive) { card.classList.remove('dimmed'); return; }
+                card.classList.toggle('dimmed', !cardMatches(card));
+            });
+            const parts = [...activeFilters.properties, ...activeFilters.flavors, ...activeFilters.channels];
+            if (parts.length) showFilterBar('组合筛选: ' + parts.join(' + '));
+            else { const b = document.getElementById('filterBar'); if (b) b.style.display = 'none'; }
+        }
+
         function showFilterBar(desc) {
             const bar = document.getElementById('filterBar');
-            document.getElementById('filterDesc').innerText = desc;
+            if (!bar) return;
+            const d = document.getElementById('filterDesc');
+            if (d) d.innerText = desc;
             bar.style.display = 'flex';
         }
-    
+
         function clearFilter() {
-            document.querySelectorAll('#tcm-herb .info-card').forEach(card => {
-                card.classList.remove('dimmed');
-            });
-            document.getElementById('filterBar').style.display = 'none';
+            activeFilters = { properties: [], flavors: [], channels: [] };
+            document.querySelectorAll('#tcm-herb .info-card').forEach(card => card.classList.remove('dimmed'));
+            const b = document.getElementById('filterBar'); if (b) b.style.display = 'none';
+            const m = document.getElementById('propertyModal'); if (m) m.style.display = 'none';
         }
     
         // ================= 新增：弹窗控制与数据检索逻辑 =================
@@ -4651,102 +4664,95 @@
                 openTcmModal('提示', `<p>暂无收录【${formulaName}】的详细方剂学档案。</p>`);
             }
         }
-    // 点击性味 / 归经标签时，触发全库扫描与弹窗展示
-// 智能匹配：支持 辛、苦、甘、酸、咸 / 肺经、膀胱经 等所有标签筛选
-function filterProperty(propName) {
-    // 1. 设置弹窗标题
+    // ============ 筛选浮窗渲染：展示已选条件 + 命中药物，且不打断继续加条件 ============
+function renderFilterModal() {
+    const modal = document.getElementById('propertyModal');
+    const container = document.getElementById('propertyHerbList');
+    if (!modal || !container) return;
+
+    // 无任何条件时收起浮窗
+    if (filterActiveCount() === 0) { modal.style.display = 'none'; return; }
+
+    const parts = [
+        ...activeFilters.properties.map(v => ['properties', v]),
+        ...activeFilters.flavors.map(v => ['flavors', v]),
+        ...activeFilters.channels.map(v => ['channels', v])
+    ];
+
+    // 标题
     const titleEl = document.getElementById('propertyModalTitle');
-    if (titleEl) {
-        titleEl.innerText = `性味 / 归经筛选：【${propName}】`;
+    if (titleEl) titleEl.innerText = '组合筛选';
+
+    // 已选条件（点击可移除该条件）
+    const chipBar = document.getElementById('activeFilterBar');
+    if (chipBar) {
+        chipBar.innerHTML = '';
+        parts.forEach(([type, val]) => {
+            const t = document.createElement('span');
+            t.className = 'active-filter-tag';
+            t.innerHTML = `${val} ✕`;
+            t.title = '点击移除此条件';
+            t.onclick = () => toggleFilter(type, val);
+            chipBar.appendChild(t);
+        });
     }
 
-    // 2. 抓取全库所有以 id="herb-xxx" 开头的药材卡片
-    const herbElements = document.querySelectorAll('[id^="herb-"]');
-    const matchedHerbs = [];
-
-    herbElements.forEach(card => {
-        // 提取药材名字（从 id="herb-麻黄" 中提取 "麻黄"）
-        const herbName = card.id.replace('herb-', '').trim();
-        
-        // 获取卡片内的全部文本内容
-        const fullText = card.innerText || card.textContent;
-
-        // 智能判定：如果卡片文本包含点击的词（如“辛”、“肺经”等）
-        if (fullText.includes(propName)) {
-            matchedHerbs.push({
-                name: herbName,
-                element: card
-            });
-        }
+    // 命中药物
+    const matched = [];
+    document.querySelectorAll('#tcm-herb .info-card').forEach(card => {
+        if (cardMatches(card)) matched.push({ name: card.id.replace('herb-', '').trim(), element: card });
     });
 
-    // 3. 渲染结果到弹窗中
-    const container = document.getElementById('propertyHerbList');
-    if (container) {
-        container.innerHTML = '';
+    const countEl = document.getElementById('filterCount');
+    if (countEl) countEl.innerText = `命中 ${matched.length} 味`;
 
-        if (matchedHerbs.length === 0) {
-            container.innerHTML = `<p style="color: #999; font-size: 0.9rem; padding: 10px;">库中暂未找到包含“${propName}”的药材。</p>`;
-        } else {
-            matchedHerbs.forEach(item => {
-                const chip = document.createElement('div');
-                chip.className = 'property-herb-chip';
-                chip.innerHTML = `<span>🌿 <b>${item.name}</b></span> <small style="font-size:0.75rem; opacity:0.7; margin-left:4px;">(点击查看详情)</small>`;
-
-                // 点击弹窗里的药材链接：关闭筛选窗 -> 展开卡片 -> 滚动定位 -> 弹出药材档案
-                chip.onclick = function() {
-                    closePropertyModal();
-                    
-                    if (item.element.tagName.toLowerCase() === 'details') {
-                        item.element.open = true;
-                    }
-                    
-                    item.element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    
-                    if (typeof openHerbModal === 'function') {
-                        openHerbModal(item.name);
-                    }
-                };
-
-                container.appendChild(chip);
-            });
-        }
+    container.innerHTML = '';
+    if (!matched.length) {
+        container.innerHTML = `<p style="color:#999;margin:4px 0;">无同时满足以上条件的药物。</p>`;
+    } else {
+        matched.forEach(item => {
+            const chip = document.createElement('div');
+            chip.className = 'property-herb-chip';
+            chip.innerHTML = `🌿 <b>${item.name}</b>`;
+            // 点击药材：展开并滚动定位，但不关闭浮窗，方便继续叠加条件
+            chip.onclick = function() {
+                const d = item.element.querySelector('details');
+                if (d) d.open = true;
+                item.element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                item.element.classList.add('herb-card-highlight');
+                setTimeout(() => item.element.classList.remove('herb-card-highlight'), 2000);
+            };
+            container.appendChild(chip);
+        });
     }
 
-    // 4. 显示弹窗
-    const modal = document.getElementById('propertyModal');
-    if (modal) {
-        modal.style.display = 'flex';
-    }
+    modal.style.display = 'block';
 }
 
-// 关闭弹窗函数
+// 兼容旧调用名
+function showPropertyCapsules() { renderFilterModal(); }
+
+// 关闭浮窗（仅隐藏，不清空条件；如需清空用 clearFilter）
 function closePropertyModal() {
     const modal = document.getElementById('propertyModal');
-    if (modal) {
-        modal.style.display = 'none';
-    }
+    if (modal) modal.style.display = 'none';
 }
-
-// 点击弹窗背景（遮罩）自动关闭
-window.addEventListener('click', function(event) {
-    const modal = document.getElementById('propertyModal');
-    if (event.target === modal) {
-        closePropertyModal();
-    }
-});
     </script>
 <!-- 性味 / 归经 专属筛选弹窗 -->
 <div id="propertyModal" class="property-modal-backdrop" style="display: none;">
     <div class="property-modal-container">
         <div class="property-modal-header">
-            <h3 id="propertyModalTitle">性味 / 归经筛选</h3>
-            <span class="property-modal-close" onclick="closePropertyModal()">&times;</span>
+            <h3 id="propertyModalTitle">组合筛选</h3>
+            <span id="filterCount" style="font-size:0.75rem;opacity:0.85;margin-left:auto;margin-right:10px;">命中 0 味</span>
+            <span class="property-modal-close" onclick="closePropertyModal()" title="收起浮窗">&times;</span>
         </div>
         <div class="property-modal-body">
-            <p class="property-modal-tip">点击下方药材标签，可快速跳转定位至该药材：</p>
+            <p class="property-modal-tip">继续点击页面中的性味 / 归经标签可叠加条件；点下方蓝标可移除对应条件；点药材可定位。</p>
+            <div id="activeFilterBar" class="active-filter-bar">
+                <!-- 已选条件标签 -->
+            </div>
             <div id="propertyHerbList" class="property-herb-grid">
-                <!-- 匹配到的药材胶囊会通过 JS 动态插入这里 -->
+                <!-- 命中药材会通过 JS 动态插入这里 -->
             </div>
         </div>
     </div>
